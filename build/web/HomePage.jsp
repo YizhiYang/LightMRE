@@ -14,30 +14,18 @@
 </head>
 <body>
   
-<!--<input id="mainButton" type="button" value="Home" onclick="displaymessage()" >
-<input type="button" value="Account" onclick="displaymessage()" >
-<input type="button" value="Search" onclick="displaymessage()" >
-<input type="button" value="About us" onclick="displaymessage()" >-->
 
-<a href="WorkBench.jsp">
-   <input type="button" id="idname" value="Home" />
-</a>
-
-<a href="AboutUs.jsp">
-   <input type="button" value="Account" />
-</a>
-
-<a href="www.google.us">
-   <input type="button" value="Search" />
-</a>
-
-<a href="AboutUs.jsp">
-   <input type="button" value="About Us" />
-</a>
-
+<div class = "topnav">
+<a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Home</a>
+<a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Account</a>
+<a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Search</a>
+<a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">About Us</a>
+</div>
     
 <script> 
-    function displaymessage() { alert("Hello World!"); }
+    function displaymessage() {
+        window.location = "AboutUs.jsp" 
+    }
 </script>
 
 

@@ -92,14 +92,24 @@ li a {
     
 }
 
-#idname {  background-color: #4CAF50; }
+.HomeButton{
+    color: #26893a;
+    text-align: center;
+    font-size: 25px;
+    float: left;
+    display:block;
+    background-color: #f95454;
+    height:30px;
+    width: 150px;
+    padding:2px 5px ;
+}
 
-.button {
-    background-color: #E3E1B8; 
-    padding: 2px 4px;
-    font: 13px sans-serif;
-    text-decoration: none;
-    border: 1px solid #000;
-    border-color: #aaa #444 #444 #aaa;
-    color: #000
+.topnav {
+    background-color: #f95454;
+    overflow: hidden;
+}
+
+.topnav a:hover {
+    background-color: #d4ecfc;
+    color: black;
 }

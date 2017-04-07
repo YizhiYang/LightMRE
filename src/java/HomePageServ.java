@@ -72,7 +72,7 @@ public class HomePageServ extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-    String url = "/HomePage.jsp";
+    String url = "HomePage.jsp";
     RequestDispatcher dispatcher =
     request.getRequestDispatcher(url);
     dispatcher.forward(request, response);
