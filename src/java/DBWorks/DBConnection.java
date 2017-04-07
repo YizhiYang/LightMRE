@@ -8,6 +8,9 @@ package DBWorks;
 import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 
 /**
  *
@@ -15,17 +18,31 @@ import java.sql.SQLException;
  */
 public class DBConnection {
     
-    public static void main(String args[]){
+    public boolean valid(HttpServletRequest request) throws ClassNotFoundException{
+        
+        if(connectDB()==false)
+            return false;
+        
+        if(request.getParameter("name").isEmpty()){
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean connectDB() throws ClassNotFoundException{
+        
+        Class.forName("com.mysql.jdbc.Driver");
         String url = "jdbc:mysql://localhost:3306/javabase";
         String username = "java";
         String password = "12345";
+        boolean result = true;
     
-        System.out.println("Connecting database...");
-
         try (Connection connection = (Connection) DriverManager.getConnection(url, username, password)) {
-            System.out.println("Database connected!");
-        } catch (SQLException e) {
-            throw new IllegalStateException("Cannot connect the database!", e);
+        } 
+        catch (SQLException e) {
+            result = false;
         }
+
+        return result;
     }
 }

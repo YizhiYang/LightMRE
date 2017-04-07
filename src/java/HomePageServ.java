@@ -4,13 +4,16 @@
  * and open the template in the editor.
  */
 
+import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.System.out;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,8 +41,8 @@ public class HomePageServ extends HttpServlet {
             out.println("<title>Servlet HomePageServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>User Name " + request.getParameter("name") + "</h1>");
-            out.println("<h1>User Name " + request.getParameter("password") + "</h1>");
+            out.println("<h1>User Name: " + request.getParameter("name") + "</h1>");
+            out.println("<h1>Password: " + request.getParameter("password") + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -73,10 +76,41 @@ public class HomePageServ extends HttpServlet {
             throws ServletException, IOException {
         
     String url = "HomePage.jsp";
-    RequestDispatcher dispatcher =
-    request.getRequestDispatcher(url);
-    dispatcher.forward(request, response);
+    String falseUrl = "index.html";
+    
+    
+    HttpSession session =request.getSession();
+    session.setAttribute("UserName", request.getParameter("name"));
+    session.setAttribute("Password", request.getParameter("password"));
+    
+    response.setContentType("text/html");
+    PrintWriter out =response.getWriter();
+    
+    
+    DBConnection connection = new DBConnection();
+    boolean result = connection.valid(request);
+    
+//    String docType ="<!DOCTYPE html> \n";
+//    out.println(docType);
+//    out.println("<html>");
+//    out.println("<head><title> Hello World</title></head>");
+//    out.println("<body>");
+//    out.println("<h1>" + session.getAttribute("UserName")+ "</h1>");
+//    out.println("<h1>" + session.getAttribute("Password")+ "</h1>");
+//    out.println("</body></html>");
+    
+    if(result == true){
+        RequestDispatcher dispatcher =
+        request.getRequestDispatcher(url);
+        dispatcher.forward(request, response);
         processRequest(request, response);
+    }
+    else{
+        RequestDispatcher dispatcher =
+        request.getRequestDispatcher(falseUrl);
+        dispatcher.forward(request, response);
+        processRequest(request, response);
+    }
     }
 
     /**
