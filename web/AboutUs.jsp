@@ -1,7 +1,5 @@
 <%-- 
-    Document   : AboutUs
-    Created on : Apr 5, 2017, 11:48:41 PM
-    Author     : MATT
+    About us page. 
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

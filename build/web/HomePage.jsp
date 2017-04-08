@@ -1,26 +1,21 @@
 <%-- 
-    Document   : WorkBench
-    Created on : Apr 5, 2017, 5:17:51 PM
-    Author     : MATT
+    Homepage that diaplay the suggestion list and menu bar
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
+ <link rel="stylesheet" href="css/style.css" type="text/css">
 <html>
     <head>
-
-        <link rel="stylesheet" href="css/style.css" type="text/css">
-
     </head>
     <body>
 
-
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Account</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Account</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
 
 
@@ -36,6 +31,7 @@
                             <th>Actor</th>
                             <th>Rating</th>
                             <th>Price</th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -50,13 +46,16 @@
                                 <td>${dList.price}</td>
                                 <td>${dList.rating}</td>
                                 <td>${dList.price}</td>
+                                <td><button type="button" onclick="rentIt()">Rent It</button></td>
                             </tr>
                         </c:forEach>
-              
+
                     </tbody>
                 </table>
- 
+
             </div>
+            
+            
         </section>
 
 
@@ -67,13 +66,19 @@
             LightMRE
         </div>
 
-
         <script>
             function displaymessage() {
                 window.location = "AboutUs.jsp"
             }
+            
+            function forwardToSearch() {
+                window.location = "Search.jsp"
+            }
+
+            function rentIt() {
+                alert("Are you sure?");
+            }
+
         </script>
-
-
     </body>
 </html>
