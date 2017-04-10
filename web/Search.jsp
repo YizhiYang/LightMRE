@@ -20,36 +20,40 @@
         </br>
         </br>
 
-        <form class="form-wrapper" action="find()">
-            <input type="text" id="search" placeholder="" required>
-            <input type="submit" value="FIND" id="submit">
+        <form class="form-wrapper" method="post" action="http://localhost:8080/LightMRE/SearchResult">
+            <input type="text" id="search" name ="search" placeholder="" required>
+            <input type="submit" id="submit" action = "SearchResult" value="Find">
+            </br>
+            </br>
+            <select name="searchType" id = "searchType">
+                <option value="name">Name</option>
+                <option value="type">Type</option>
+            </select>
         </form>
 
+
+
+
+
         <div class="detailSearch">
-        <ul class="searchMenu">
-            <li class="searchMenuButton"><a href="#home">Beat Sell</a></li>
-            <li class="searchMenuButton"><a href="#news">Details Search</a></li>
-            <li class="searchMenuButton"><a href="#contact">Contact</a></li>
-            <li class="searchMenuButton"><a href="#about">About Us</a></li>
-        </ul>
+            <ul class="searchMenu">
+                <li class="searchMenuButton"><a href="#home">Beat Sell</a></li>
+                <li class="searchMenuButton"><a href="#news">Details Search</a></li>
+                <li class="searchMenuButton"><a href="#contact">Contact</a></li>
+                <li class="searchMenuButton"><a href="#about">About Us</a></li>
+            </ul>
         </div>
 
         <div class="made-with-love">
-            <img src="sbuLogoSmall.png" alt="Smiley face" height="208" width="252">
+            <img src="images/sbuLogoSmall.png" alt="Smiley face" height="208" width="252">
             </br>
             LightMRE
         </div>
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         <script>
             function find() {
+                //session.setAttribute("keyword", document.getElementById("search"));
+
                 window.location = "SearchResult.jsp"
             }
         </script>

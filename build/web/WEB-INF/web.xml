@@ -4,9 +4,17 @@
         <servlet-name>HomePageServ</servlet-name>
         <servlet-class>HomePageServ</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SearchResult</servlet-name>
+        <servlet-class>SearchResult</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
         <url-pattern>/HomePageServ</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SearchResult</servlet-name>
+        <url-pattern>/SearchResult</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

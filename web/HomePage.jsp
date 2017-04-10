@@ -61,7 +61,7 @@
 
         <!-- follow me template -->
         <div class="made-with-love">
-            <img src="sbuLogoSmall.png" alt="Smiley face" height="208" width="252">
+            <img src="images/sbuLogoSmall.png" alt="Smiley face" height="208" width="252">
             </br>
             LightMRE
         </div>

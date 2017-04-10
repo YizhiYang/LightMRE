@@ -8,7 +8,6 @@ import Beans.Recommendation;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author MATT
  */
-public class HomePageServ extends HttpServlet {
+public class SearchResult extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,11 +43,10 @@ public class HomePageServ extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomePageServlet</title>");
+            out.println("<title>Servlet SearchResult</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>User Name: " + request.getParameter("name") + "</h1>");
-            out.println("<h1>Password: " + request.getParameter("password") + "</h1>");
+            out.println("<h1>Servlet SearchResult at " + request.getParameter("searchType") + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -83,62 +81,42 @@ public class HomePageServ extends HttpServlet {
 
         try {
 
-            String url = "HomePage.jsp";
-            String falseUrl = "index.html";
-
-            // Store name and password into Session Object
             HttpSession session = request.getSession();
-            session.setAttribute("UserName", request.getParameter("name"));
-            session.setAttribute("Password", request.getParameter("password"));
-
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
-
-            // Connect to the DB
+            session.setAttribute("KeyWord", request.getParameter("search"));
             DBConnection DBConnect = new DBConnection();
-            boolean result = false;
-            try {
-                result = DBConnect.valid(request);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+            if (DBConnect.connectDB() == false) {
+                processRequest(request, response);
             }
-
-            session.setAttribute("r", request);
-
             ResultSet rs = null;
-
-            //get recommendation list and store them into bean class.
-            rs = DBConnect.getRecommendation("PLACE HOLDER", "PLACE HOLDER");
-            //if result set from the SQL Query is not empty
-            //store them into bean class, then store beans
-            //class into session object. JSP can get these beans.
-            ArrayList list = new ArrayList();
-  
+            
+            if(request.getParameter("searchType").equals("name"))
+                rs = DBConnect.queryMovie(request.getParameter("search"));
+            
+            else
+                rs = DBConnect.queryMovieByType(request.getParameter("search"));
+            
+            
+            ArrayList resultList = new ArrayList();
             while (rs.next()) {
                 Recommendation movie = new Recommendation();
                 movie.setName(rs.getString("Name"));
                 movie.setType(rs.getString("Type"));
                 movie.setRating(rs.getInt("Rating"));
                 movie.setPrice(rs.getDouble("DistrFee"));
-                list.add(movie);
+                resultList.add(movie);
             }
-            request.setAttribute("recommendList", list);
-
-            // if user name and password are valid, forward to the homepage.
+            request.setAttribute("searchList", resultList);
+            
             DBConnect.close();
-            if (result) {
-                RequestDispatcher dispatcher
-                        = request.getRequestDispatcher(url);
-                dispatcher.forward(request, response);
-            } // if not, then forward back to the login page.
-            else {
-                RequestDispatcher dispatcher
-                        = request.getRequestDispatcher(falseUrl);
-                dispatcher.forward(request, response);
-            }
+            String url = "SearchResult.jsp";
+            RequestDispatcher dispatcher
+                    = request.getRequestDispatcher(url);
+            dispatcher.forward(request, response);
 
-        }   catch (SQLException ex) {
-            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
