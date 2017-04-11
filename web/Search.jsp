@@ -28,6 +28,7 @@
             <select name="searchType" id = "searchType">
                 <option value="name">Name</option>
                 <option value="type">Type</option>
+                <option value="type">Actor</option>
             </select>
         </form>
 

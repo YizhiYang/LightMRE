@@ -69,7 +69,7 @@ public class DBConnection {
 
         return rs;
     }
-    
+
     // query based on the name of the movie
     public ResultSet queryMovie(String name) {
 
@@ -85,8 +85,7 @@ public class DBConnection {
             return null;
         }
     }
-    
-    
+
     // query based on the type of movie.
     public ResultSet queryMovieByType(String name) {
 
@@ -103,6 +102,32 @@ public class DBConnection {
         }
     }
 
+    public ResultSet queryMovieByActor(String name) {
+
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Type = ?");
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet queryAllMovie() throws SQLException {
+
+        Statement stmt = null;
+        stmt = conn.createStatement();
+        String sql = "SELECT Name, Type, Rating, DistrFee FROM Movie";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        return rs;
+
+    }
+
     // close the connection to the DB
     public void close() {
         try {
@@ -110,5 +135,15 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    // return the list of all employee
+    public ResultSet queryAllEmployees() throws SQLException {
+
+        Statement stmt = null;
+        stmt = conn.createStatement();
+        String sql = "SELECT Id, SSN, StartDate, HourlyRate FROM Employee";
+        ResultSet rs = stmt.executeQuery(sql);
+        return rs;
     }
 }

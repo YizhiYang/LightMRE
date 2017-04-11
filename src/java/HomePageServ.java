@@ -82,17 +82,21 @@ public class HomePageServ extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-
-            String url = "HomePage.jsp";
-            String falseUrl = "index.html";
-
             // Store name and password into Session Object
             HttpSession session = request.getSession();
             session.setAttribute("UserName", request.getParameter("name"));
             session.setAttribute("Password", request.getParameter("password"));
 
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
+            char accountType = ' ';
+
+            // identify the account type. 
+            if ((request.getParameter("name").charAt(0)) == 'c') {
+                accountType = 'c';
+            } else if ((request.getParameter("name").charAt(0)) == 'e') {
+                accountType = 'e';
+            } else if ((request.getParameter("name").charAt(0)) == 'm') {
+                accountType = 'm';
+            }
 
             // Connect to the DB
             DBConnection DBConnect = new DBConnection();
@@ -107,37 +111,69 @@ public class HomePageServ extends HttpServlet {
 
             ResultSet rs = null;
 
-            //get recommendation list and store them into bean class.
-            rs = DBConnect.getRecommendation("PLACE HOLDER", "PLACE HOLDER");
-            //if result set from the SQL Query is not empty
-            //store them into bean class, then store beans
-            //class into session object. JSP can get these beans.
-            ArrayList list = new ArrayList();
-  
-            while (rs.next()) {
-                Recommendation movie = new Recommendation();
-                movie.setName(rs.getString("Name"));
-                movie.setType(rs.getString("Type"));
-                movie.setRating(rs.getInt("Rating"));
-                movie.setPrice(rs.getDouble("DistrFee"));
-                list.add(movie);
-            }
-            request.setAttribute("recommendList", list);
+            // if the login account is a customer 
+            if (accountType == 'c') {
+                String url = "HomePage.jsp";
+                String falseUrl = "index.html";
+                //get recommendation list and store them into bean class.
+                rs = DBConnect.getRecommendation("PLACE HOLDER", "PLACE HOLDER");
+                //if result set from the SQL Query is not empty
+                //store them into bean class, then store beans
+                //class into session object. JSP can get these beans.
+                ArrayList list = new ArrayList();
 
-            // if user name and password are valid, forward to the homepage.
-            DBConnect.close();
-            if (result) {
-                RequestDispatcher dispatcher
-                        = request.getRequestDispatcher(url);
-                dispatcher.forward(request, response);
-            } // if not, then forward back to the login page.
-            else {
-                RequestDispatcher dispatcher
-                        = request.getRequestDispatcher(falseUrl);
-                dispatcher.forward(request, response);
+                while (rs.next()) {
+                    Recommendation movie = new Recommendation();
+                    movie.setName(rs.getString("Name"));
+                    movie.setType(rs.getString("Type"));
+                    movie.setRating(rs.getInt("Rating"));
+                    movie.setPrice(rs.getDouble("DistrFee"));
+                    list.add(movie);
+                }
+                request.setAttribute("recommendList", list);
+
+                // if user name and password are valid, forward to the homepage.
+                DBConnect.close();
+                if (result) {
+                    RequestDispatcher dispatcher
+                            = request.getRequestDispatcher(url);
+                    dispatcher.forward(request, response);
+                } // if not, then forward back to the login page.
+                else {
+                    RequestDispatcher dispatcher
+                            = request.getRequestDispatcher(falseUrl);
+                    dispatcher.forward(request, response);
+                }
+            } else if (accountType == 'm') {
+                String url = "ManagerHomePage.jsp";
+                String falseUrl = "index.html";
+                ArrayList list = new ArrayList();
+                rs = DBConnect.queryAllMovie();
+
+                while (rs.next()) {
+                    Recommendation movie = new Recommendation();
+                    movie.setName(rs.getString("Name"));
+                    movie.setType(rs.getString("Type"));
+                    movie.setRating(rs.getInt("Rating"));
+                    movie.setPrice(rs.getDouble("DistrFee"));
+                    list.add(movie);
+                }
+                request.setAttribute("allMovie", list);
+                DBConnect.close();
+
+                if (result) {
+                    RequestDispatcher dispatcher
+                            = request.getRequestDispatcher(url);
+                    dispatcher.forward(request, response);
+                } // if not, then forward back to the login page.
+                else {
+                    RequestDispatcher dispatcher
+                            = request.getRequestDispatcher(falseUrl);
+                    dispatcher.forward(request, response);
+                }
             }
 
-        }   catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
