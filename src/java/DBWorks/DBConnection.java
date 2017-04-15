@@ -130,7 +130,41 @@ public class DBConnection {
         return rs;
 
     }
-
+    public ResultSet queryUserSuggestedMovies(int accId) throws SQLException{
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT DISTINCT " +
+                "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.movie.DistrFee " +
+                "FROM " +
+                "    moviedb.movie " +
+                "WHERE " +
+                "    movie.Type IN (SELECT  " +
+                "            MAX(moviedb.movie.Type) " +
+                "        FROM " +
+                "            moviedb.rental, " +
+                "            moviedb.order, " +
+                "            moviedb.movie " +
+                "        WHERE " +
+                "            moviedb.rental.AccountId = ? " +
+                "                AND moviedb.rental.OrderId = moviedb.order.Id " +
+                "                AND rental.MovieId = moviedb.movie.Id) " +
+                "        AND moviedb.movie.Id NOT IN (SELECT  " +
+                "            moviedb.movie.Id " +
+                "        FROM " +
+                "            moviedb.movie, " +
+                "            moviedb.rental " +
+                "        WHERE " +
+                "            moviedb.movie.Id = rental.MovieId " +
+                "                AND rental.AccountId = ?)");
+            stmt.setInt(1, accId);
+            stmt.setInt(2, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     // close the connection to the DB
     public void close() {
         try {
