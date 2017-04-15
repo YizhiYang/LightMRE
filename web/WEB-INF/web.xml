@@ -12,6 +12,10 @@
         <servlet-name>ListOfEmployees</servlet-name>
         <servlet-class>ListOfEmployees</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteMovie</servlet-name>
+        <servlet-class>DeleteMovie</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
         <url-pattern>/HomePageServ</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>ListOfEmployees</servlet-name>
         <url-pattern>/ListOfEmployees</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMovie</servlet-name>
+        <url-pattern>/DeleteMovie</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

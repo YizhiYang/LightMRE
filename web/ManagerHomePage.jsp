@@ -87,6 +87,7 @@
                 // getting which col is selected, returned the name
                 var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Are you sure you want to remove " + name + "?");
+                location.href = "HomePageServ?var=" + name;
             }
 
 

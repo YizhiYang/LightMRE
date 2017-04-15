@@ -48,6 +48,7 @@ public class HomePageServ extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>User Name: " + request.getParameter("name") + "</h1>");
+            out.println("<h1>User Name: " + request.getParameter("var") + "</h1>");
             out.println("<h1>Password: " + request.getParameter("password") + "</h1>");
             out.println("</body>");
             out.println("</html>");
@@ -66,7 +67,41 @@ public class HomePageServ extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //this.processRequest(request, response);
+        try {
+            DBConnection DBConnect = new DBConnection();
+            DBConnect.connectDB();
+            boolean result = false;
+            if (request.getParameter("var") != null) {
+                DBConnect.deleteMovie(request.getParameter("var"));
+
+
+            }
+            ResultSet rs = null;
+            String url = "ManagerHomePage.jsp";
+            ArrayList list = new ArrayList();
+            rs = DBConnect.queryAllMovie();
+
+            while (rs.next()) {
+                Recommendation movie = new Recommendation();
+                movie.setName(rs.getString("Name"));
+                movie.setType(rs.getString("Type"));
+                movie.setRating(rs.getInt("Rating"));
+                movie.setPrice(rs.getDouble("DistrFee"));
+                list.add(movie);
+            }
+            request.setAttribute("allMovie", list);
+            DBConnect.close();
+
+            RequestDispatcher dispatcher
+                    = request.getRequestDispatcher(url);
+            dispatcher.forward(request, response);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -168,6 +203,7 @@ public class HomePageServ extends HttpServlet {
                 }
             } else {
                 String falseUrl = "index.html";
+                String url = "ManagerHomePage.jsp";
                 RequestDispatcher dispatcher
                         = request.getRequestDispatcher(falseUrl);
                 dispatcher.forward(request, response);

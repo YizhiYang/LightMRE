@@ -146,4 +146,19 @@ public class DBConnection {
         ResultSet rs = stmt.executeQuery(sql);
         return rs;
     }
+    
+    public boolean deleteMovie(String moiveName){
+        
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("DELETE FROM Movie WHERE Name = ?");
+            stmt.setString(1, moiveName);
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }
