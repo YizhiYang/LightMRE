@@ -6,6 +6,7 @@
 package DBWorks;
 
 import com.mysql.jdbc.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -212,5 +213,47 @@ public class DBConnection {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+    public boolean addCustomer(int zipCode, String city, String state, String ssn, String lastName, String firstName,
+            String address, String telephone, int id, String email, int rating, String creditCardNumber,
+            Date dateOpened, String accountType){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+            stmt.setInt(1, zipCode);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("INSERT INTO Person(SSN, LastName, FirstName, Address, ZipCode, Telephone)"
+                    + " VALUES(?, ?, ?, ?, ?, ?)");
+            stmt.setString(1, ssn);
+            stmt.setString(2, lastName);
+            stmt.setString(3, firstName);
+            stmt.setString(4, address);
+            stmt.setInt(5, zipCode);
+            stmt.setString(6, telephone);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("INSERT INTO Customer(Id, Email, Rating, CreditCardNumber) VALUES(?, ?, ?, ?)");
+            stmt.setString(1, ssn);
+            stmt.setString(2, email);
+            stmt.setInt(3, rating);
+            stmt.setString(4, creditCardNumber);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("INSERT INTO Account(Id, DateOpened, Type, Customer) VALUES (?, ?, ?, ?");
+            stmt.setInt(1, id);
+            stmt.setDate(2, dateOpened);
+            stmt.setString(3, accountType);
+            stmt.setString(4, ssn);
+            stmt.executeUpdate();
+
+            return true;
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
     }
 }
