@@ -47,7 +47,7 @@
                                 <td contenteditable='true'>${dList.price}</td>
                                 <td contenteditable='true'>${dList.rating}</td>
                                 <td contenteditable='true'>${dList.price}</td>
-                                <td><button type="button" onclick="getId(this)">Edit</button></td>
+                                <td><button type="button" onclick="editMovie(this)">Edit</button></td>
                                 <td><button type="button" onclick="deleteMovie(this)">Delete</button></td>
                             </tr>
                         </c:forEach>
@@ -75,12 +75,6 @@
             function forwardToSearch() {
                 window.location = "Search.jsp"
             }
-
-            function rentIt() {
-                var va = document.getElementById('movieName').value;
-                alert(va);
-            }
-
 
             function editMovie(element) {
 

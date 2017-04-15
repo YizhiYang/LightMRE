@@ -139,11 +139,6 @@ public class HomePageServ extends HttpServlet {
                             = request.getRequestDispatcher(url);
                     dispatcher.forward(request, response);
                 } // if not, then forward back to the login page.
-                else {
-                    RequestDispatcher dispatcher
-                            = request.getRequestDispatcher(falseUrl);
-                    dispatcher.forward(request, response);
-                }
             } else if (accountType == 'm') {
                 String url = "ManagerHomePage.jsp";
                 String falseUrl = "index.html";
@@ -171,6 +166,11 @@ public class HomePageServ extends HttpServlet {
                             = request.getRequestDispatcher(falseUrl);
                     dispatcher.forward(request, response);
                 }
+            } else {
+                String falseUrl = "index.html";
+                RequestDispatcher dispatcher
+                        = request.getRequestDispatcher(falseUrl);
+                dispatcher.forward(request, response);
             }
 
         } catch (SQLException ex) {
