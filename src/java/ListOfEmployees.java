@@ -44,7 +44,7 @@ public class ListOfEmployees extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ListOfEmployees</title>");            
+            out.println("<title>Servlet ListOfEmployees</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ListOfEmployees at " + request.getContextPath() + "</h1>");
@@ -65,7 +65,40 @@ public class ListOfEmployees extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        try {
+            DBConnection DBConnect = new DBConnection();
+            DBConnect.connectDB();
+            if (request.getParameter("EmployeeId") != null) {
+                boolean result = DBConnect.deleteEmployee(request.getParameter("EmployeeId"));
+                request.setAttribute("deleteStatus", result);
+            }
+            ResultSet rs = null;
+            String url = "Employees.jsp";
+            ArrayList list = new ArrayList();
+            rs = DBConnect.queryAllEmployees();
+
+            while (rs.next()) {
+                Employee employee = new Employee();
+                employee.setID(rs.getInt("Id"));
+                employee.setSSN(rs.getString("SSN"));
+                employee.setDate(rs.getDate("StartDate"));
+                employee.setHourlyRate(rs.getInt("HourlyRate"));
+                list.add(employee);
+            }
+            request.setAttribute("employeesList", list);
+            DBConnect.close();
+
+            RequestDispatcher dispatcher
+                    = request.getRequestDispatcher(url);
+            dispatcher.forward(request, response);
+            //this.processRequest(request, response);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -79,8 +112,7 @@ public class ListOfEmployees extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-            
+
         try {
 
             DBConnection DBConnect = new DBConnection();
@@ -88,10 +120,9 @@ public class ListOfEmployees extends HttpServlet {
                 processRequest(request, response);
             }
             ResultSet rs = null;
-            
-                rs = DBConnect.queryAllEmployees();
-            
-            
+
+            rs = DBConnect.queryAllEmployees();
+
             ArrayList resultList = new ArrayList();
             while (rs.next()) {
                 Employee employee = new Employee();
@@ -102,7 +133,7 @@ public class ListOfEmployees extends HttpServlet {
                 resultList.add(employee);
             }
             request.setAttribute("employeesList", resultList);
-            
+
             DBConnect.close();
             String url = "Employees.jsp";
             RequestDispatcher dispatcher

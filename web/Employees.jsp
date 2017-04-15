@@ -8,6 +8,15 @@
 <link rel="stylesheet" href="css/style.css" type="text/css">
 <html>
     <head>
+        <script>
+            function deleteFalse() {
+                alert("He/She is on duty, cannot be fired");
+            }
+
+            function deleteTrue() {
+                alert("Delete Successfully");
+            }
+        </script>
     </head>
     <body>
 
@@ -46,7 +55,7 @@
                                 <td contenteditable='true'>${dList.date}</td>
                                 <td contenteditable='true'>${dList.hourlyRate}</td>
                                 <td><button type="button" onclick="getId(this)">Edit</button></td>
-                                <td><button type="button" onclick="deleteMovie(this)">Delete</button></td>
+                                <td><button type="button" onclick="deleteEmployee(this)">Delete</button></td>
                             </tr>
                         </c:forEach>
 
@@ -65,6 +74,19 @@
             LightMRE
         </div>
 
+        <c:choose>
+            <c:when test="${deleteStatus =='false'}">
+                <script> deleteFalse()</script> 
+                <br />
+            </c:when>    
+            <c:when test="${deleteStatus =='true'}">
+                <script> deleteTrue()</script>
+                <br />
+            </c:when>
+            <c:otherwise>
+            </c:otherwise>
+        </c:choose>
+
         <script>
             function displaymessage() {
                 window.location = "AboutUs.jsp"
@@ -80,20 +102,19 @@
             }
 
 
-            function editMovie(element) {
+            function editEmployee(element) {
 
                 // getting which col is selected, returned the name
                 var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Edit " + name + "?");
             }
-            function deleteMovie(element) {
+            function deleteEmployee(element) {
 
                 // getting which col is selected, returned the name
-                var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
-                confirm("Are you sure you want to remove " + name + "?");
+                var id = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
+                confirm("Are you sure you want to delete " + id + "?");
+                location.href = "ListOfEmployees?EmployeeId=" + id;
             }
-
-
         </script>
     </body>
 </html>

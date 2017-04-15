@@ -161,4 +161,19 @@ public class DBConnection {
             return false;
         }
     }
+    
+    public boolean deleteEmployee(String id){
+        
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("DELETE FROM Employee WHERE Id = ?");
+            stmt.setString(1, id);
+            stmt.executeUpdate();
+            return true;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }
