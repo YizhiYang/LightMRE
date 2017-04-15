@@ -4,10 +4,20 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 <!DOCTYPE html>
 <link rel="stylesheet" href="css/style.css" type="text/css">
 <html>
     <head>
+        <script>
+            function deleteFalse() {
+                alert("The movie is rent out; cannot be deleted");
+            }
+
+            function deleteTrue() {
+                alert("Delete Successfully");
+            }
+        </script>
     </head>
     <body>
 
@@ -18,7 +28,8 @@
                 <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="javascript:document.submitForm.submit()">Employees</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
             </div>
-            </form>
+
+        </form>
         <section>
             <!--for demo wrap-->
             <h1 id = "youMayLike">All Movies</h1>
@@ -54,8 +65,9 @@
 
                     </tbody>
                 </table>
-
             </div>
+
+
 
 
         </section>
@@ -66,6 +78,20 @@
             </br>
             LightMRE
         </div>
+
+
+        <c:choose>
+            <c:when test="${deleteStatus =='false'}">
+                <script> deleteFalse()</script> 
+                <br />
+            </c:when>    
+            <c:when test="${deleteStatus =='true'}">
+                <script> deleteTrue()</script>
+                <br />
+            </c:when>
+            <c:otherwise>
+            </c:otherwise>
+        </c:choose>
 
         <script>
             function displaymessage() {
@@ -87,9 +113,12 @@
                 // getting which col is selected, returned the name
                 var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Are you sure you want to remove " + name + "?");
-                location.href = "HomePageServ?var=" + name;
+                location.href = "HomePageServ?MovieName=" + name;
             }
 
+            function deleteFalse() {
+                confirm("really");
+            }
 
         </script>
     </body>

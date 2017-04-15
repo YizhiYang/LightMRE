@@ -71,11 +71,9 @@ public class HomePageServ extends HttpServlet {
         try {
             DBConnection DBConnect = new DBConnection();
             DBConnect.connectDB();
-            boolean result = false;
-            if (request.getParameter("var") != null) {
-                DBConnect.deleteMovie(request.getParameter("var"));
-
-
+            if (request.getParameter("MovieName") != null) {
+                boolean result = DBConnect.deleteMovie(request.getParameter("MovieName"));
+                request.setAttribute("deleteStatus", result);
             }
             ResultSet rs = null;
             String url = "ManagerHomePage.jsp";
