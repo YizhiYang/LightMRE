@@ -122,13 +122,14 @@ public class HomePageServ extends HttpServlet {
 
             char accountType = ' ';
 
-            // identify the account type. 
-            if ((request.getParameter("name").charAt(0)) == 'c') {
-                accountType = 'c';
-            } else if ((request.getParameter("name").charAt(0)) == 'e') {
-                accountType = 'e';
-            } else if ((request.getParameter("name").charAt(0)) == 'm') {
-                accountType = 'm';
+            if((request.getParameter("name").length() != 0)){
+                if ((request.getParameter("name").charAt(0)) == 'c') {
+                    accountType = 'c';
+                } else if ((request.getParameter("name").charAt(0)) == 'e') {
+                    accountType = 'e';
+                } else if ((request.getParameter("name").charAt(0)) == 'm') {
+                    accountType = 'm';
+                }
             }
 
             // Connect to the DB
@@ -148,8 +149,10 @@ public class HomePageServ extends HttpServlet {
             if (accountType == 'c') {
                 String url = "HomePage.jsp";
                 String falseUrl = "index.html";
+                int accId = 1;
                 //get recommendation list and store them into bean class.
-                rs = DBConnect.getRecommendation("PLACE HOLDER", "PLACE HOLDER");
+                rs = DBConnect.queryUserSuggestedMovies(accId);
+                //rs = DBConnect.queryAllMovie();
                 //if result set from the SQL Query is not empty
                 //store them into bean class, then store beans
                 //class into session object. JSP can get these beans.

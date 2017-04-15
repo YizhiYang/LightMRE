@@ -29,7 +29,7 @@ public class DBConnection {
         conn = null;
     }
 
-    public boolean valid(HttpServletRequest request) throws ClassNotFoundException {
+    public boolean valid(HttpServletRequest request) throws ClassNotFoundException, SQLException {
 
         if (connectDB() == false) {
             return false;
@@ -41,14 +41,14 @@ public class DBConnection {
         return true;
     }
 
-    public boolean connectDB() throws ClassNotFoundException {
+    public boolean connectDB() throws ClassNotFoundException, SQLException {
 
         Class.forName("com.mysql.jdbc.Driver");
         String url = "jdbc:mysql://localhost:3306/moviedb";
         String username = "java";
         String password = "12345";
         boolean result = true;
-
+            
         try {
             conn = (Connection) DriverManager.getConnection(url, username, password);
             result = true;
@@ -75,8 +75,8 @@ public class DBConnection {
 
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Name = ?");
-            stmt.setString(1, name);
+            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Name LIKE ?");
+            stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
             return rs;
 
@@ -91,8 +91,8 @@ public class DBConnection {
 
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Type = ?");
-            stmt.setString(1, name);
+            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Type LIKE ?");
+            stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
             return rs;
 
@@ -106,8 +106,11 @@ public class DBConnection {
 
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT Name, Type, Rating, DistrFee FROM Movie WHERE Type = ?");
-            stmt.setString(1, name);
+            stmt = conn.prepareStatement("SELECT Movie.Name, Movie.Type, Movie.Rating, Movie.DistrFee FROM Movie, Actor, AppearedIn"
+                    + " WHERE AppearedIn.MovieId = Movie.Id"
+                    + " AND AppearedIn.ActorId = Actor.Id"
+                    + " AND Actor.Name LIKE ?");
+            stmt.setString(1, "%" + name + "%");
             ResultSet rs = stmt.executeQuery();
             return rs;
 
@@ -127,7 +130,41 @@ public class DBConnection {
         return rs;
 
     }
-
+    public ResultSet queryUserSuggestedMovies(int accId) throws SQLException{
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT DISTINCT " +
+                "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.movie.DistrFee " +
+                "FROM " +
+                "    moviedb.movie " +
+                "WHERE " +
+                "    movie.Type IN (SELECT  " +
+                "            MAX(moviedb.movie.Type) " +
+                "        FROM " +
+                "            moviedb.rental, " +
+                "            moviedb.order, " +
+                "            moviedb.movie " +
+                "        WHERE " +
+                "            moviedb.rental.AccountId = ? " +
+                "                AND moviedb.rental.OrderId = moviedb.order.Id " +
+                "                AND rental.MovieId = moviedb.movie.Id) " +
+                "        AND moviedb.movie.Id NOT IN (SELECT  " +
+                "            moviedb.movie.Id " +
+                "        FROM " +
+                "            moviedb.movie, " +
+                "            moviedb.rental " +
+                "        WHERE " +
+                "            moviedb.movie.Id = rental.MovieId " +
+                "                AND rental.AccountId = ?)");
+            stmt.setInt(1, accId);
+            stmt.setInt(2, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     // close the connection to the DB
     public void close() {
         try {
