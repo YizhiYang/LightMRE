@@ -91,7 +91,8 @@ public class SearchResult extends HttpServlet {
             
             if(request.getParameter("searchType").equals("name"))
                 rs = DBConnect.queryMovie(request.getParameter("search"));
-            
+            else if(request.getParameter("searchType").equals("actor"))
+                rs = DBConnect.queryMovieByActor(request.getParameter("search"));
             else
                 rs = DBConnect.queryMovieByType(request.getParameter("search"));
             
