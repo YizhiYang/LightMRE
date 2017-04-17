@@ -256,4 +256,92 @@ public class DBConnection {
         }
         
     }
+    /*
+        add movie, add employee, edit movie, edit employee, edit coustomer
+    */
+    public boolean addMovie(int Id, String Name, String Type, int Rating, double DistrFee, int NumCopies){
+        try{
+            PreparedStatement stmt = null;
+            stmt= conn.prepareStatement("INSERT INTO Movie(Id, Name, Type, Rating, DistrFee, NumCopies) VALUES (?,?,?,?,?,?)");
+            stmt.setInt(1,Id);
+            stmt.setString(2, Name);
+            stmt.setString(3, Type);
+            stmt.setInt(4,Rating);
+            stmt.setDouble(5,DistrFee);
+            stmt.setInt(6,NumCopies);
+            
+            stmt.executeUpdate();
+            return true;
+        }
+        catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public boolean addEmployee(int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
+            Date StartDate, double HourlyRate){
+        
+        try{
+            PreparedStatement stmt = null;
+            stmt= conn.prepareStatement("INSERT INTO Person(SSN, LastName, FirstName, Address, Zipcode, Telephone) VALUES (?,?,?,?,?,?)");
+            stmt.setInt(1, SSN);
+            stmt.setString(2, LastName);
+            stmt.setString(3, FirstName);
+            stmt.setString(4, Address);
+            stmt.setInt(5, Zipcode);
+            stmt.setString(6, Telephone);
+            stmt.executeUpdate();
+            
+            //update address
+            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+            stmt.setInt(1, Zipcode);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.executeUpdate();
+            
+            //get the newest ID in employee
+            stmt = conn.prepareStatement("SELECT MAX(Id) FROM Employee");
+            ResultSet rs = stmt.executeQuery();
+            int Id = ((Number) rs.getObject(1)).intValue() + 1;
+            
+            //update employee
+            stmt = conn.prepareStatement("INSERT INTO Employee(Id, SSN, StartDate, HourlyRate) VALUES (?,?,?,?)");
+            stmt.setInt(1, Id);
+            stmt.setInt(2,SSN);
+            stmt.setDate(3,StartDate);
+            stmt.setDouble(4,HourlyRate);
+            stmt.executeUpdate();
+            
+            return true;
+        }
+        catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public boolean editEmployee(int Id, int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
+            Date StartDate, double HourlyRate){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Id FROM moviedb.employee WHERE ? = Id");
+            stmt.setInt(1,Id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs != null){
+                //id exist
+                
+                return true;
+            }
+            else{
+                //id not exist
+                return false;
+            }
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    public boolean editCustomer(){
+        return true;
+    }
 }
