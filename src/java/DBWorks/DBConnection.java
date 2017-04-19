@@ -361,7 +361,8 @@ public class DBConnection {
             stmt.setInt(4, NumOfCopies);
             stmt.setInt(5,Id);
             stmt.executeUpdate();
-            
+               
+            return true;
         }catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
