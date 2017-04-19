@@ -368,29 +368,103 @@ public class DBConnection {
             return false;
         }
     }
-//    public boolean editEmployee(int Id, int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
-//            Date StartDate, double HourlyRate){
-//        try{
-//            PreparedStatement stmt = null;
-//            stmt = conn.prepareStatement("SELECT Id FROM moviedb.employee WHERE ? = Id");
-//            stmt.setInt(1,Id);
-//            ResultSet rs = stmt.executeQuery();
-//            if(rs != null){
-//                //id exist
-//                
-//                return true;
-//            }
-//            else{
-//                //id not exist
-//                return false;
-//            }
-//        }catch(SQLException ex)
-//        {
-//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
-//            return false;
-//        }
-//    }
-//    public boolean editCustomer(){
-//        return true;
-//    }
+    public boolean editEmployee(int Id, String SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
+            Date StartDate, int HourlyRate){
+        try{
+            PreparedStatement stmt = null;
+            stmt= conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
+            stmt.setString(1, LastName);
+            stmt.setString(2, FirstName);
+            stmt.setString(3, Address);
+            stmt.setInt(4, Zipcode);
+            stmt.setString(5, Telephone);
+            stmt.setString(6, SSN);
+            stmt.executeUpdate();
+            //add new zipcode if didn't exist
+            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+            stmt.setInt(1, Zipcode);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.executeUpdate();
+            //update employee table
+            stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ? WHERE Id = ?");
+            stmt.setDate(1,StartDate);
+            stmt.setInt(2,HourlyRate);
+            stmt.setInt(3,Id);
+            stmt.executeUpdate();
+            
+            return true;
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    public boolean recordOrder(Date orderTime, Date orderReturnDate, int accountId, int rentalCusRepId, int rentalOrderId, String rentalMovieId){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT MAX(Id) FROM Order");
+            ResultSet rs = stmt.executeQuery();
+            int Id = ((Number) rs.getObject(1)).intValue() + 1;
+            
+            stmt = conn.prepareStatement("INSERT INTO Order(Id, DateTime,ReturnDate) VALUES (?,?,?)");
+            stmt.setInt(1, Id);
+            stmt.setDate(2, orderTime);
+            stmt.setDate(3,orderReturnDate);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("INSERT INTO Rental(AccountId,CustRepId,OrderId,MovieId) VALUES (?,?,?,?)");
+            stmt.setInt(1, accountId);
+            stmt.setInt(2, rentalCusRepId);
+            stmt.setInt(3, rentalOrderId);
+            stmt.setString(4, rentalMovieId);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("INSERT INTO MovieQ(AccountId, MovieId) VALUES (?,?");
+            stmt.setInt(1, accountId);
+            stmt.setString(2, rentalMovieId);
+            stmt.executeUpdate();
+            
+            return true;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    public boolean deleteCustomer(String SSN){
+        try{
+            PreparedStatement stmt = null;
+            
+            stmt = conn.prepareStatement("DELETE FROM Account WHERE Customer = ?");
+            stmt.setString(1, SSN);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("DELETE FROM Customer WHERE Id = ?");
+            stmt.setString(1,SSN);
+            stmt.executeUpdate();
+            
+            stmt = conn.prepareStatement("DELETE FROM Person WHERE SSN = ?");
+            stmt.setString(1,SSN);
+            stmt.executeUpdate();
+            
+            return true;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    public ResultSet getCustomerMailing(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Person.LastName, Person.FirstName, Person.Address, Location.City,"
+                    + " Location.State, Location.ZipCode"
+                    + "FROM Person, Location, Customer "
+                    + " WHERE Customer.Id = Person.SSN AND Person.ZipCode = Location.ZipCode");
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return null;
+        }
+    }
 }
