@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 
 /**
  *
@@ -257,20 +258,47 @@ public class DBConnection {
         
     }
     /*
-        add movie, add employee, edit movie, edit employee, edit coustomer
+        Add movie
     */
-    public boolean addMovie(int Id, String Name, String Type, int Rating, double DistrFee, int NumCopies){
+    public boolean addMovie(int Id, String Name, String Type, int Rating, double DistrFee, int NumCopies, int[] ActorId, String[] ActorName, int[] ActorAge, char[] ActorGender){
         try{
             PreparedStatement stmt = null;
+            
+            //add information of movie
             stmt= conn.prepareStatement("INSERT INTO Movie(Id, Name, Type, Rating, DistrFee, NumCopies) VALUES (?,?,?,?,?,?)");
             stmt.setInt(1,Id);
             stmt.setString(2, Name);
             stmt.setString(3, Type);
             stmt.setInt(4,Rating);
-            stmt.setDouble(5,DistrFee);
+            
+            BigDecimal fee = new BigDecimal(DistrFee);
+            stmt.setBigDecimal(5,fee);
+            
             stmt.setInt(6,NumCopies);
             
             stmt.executeUpdate();
+            
+            //add information of Actor in movie and AppearedIn
+            int numOfActor = ActorId.length;
+            if(ActorId != null && ActorName != null && ActorAge != null && ActorGender != null){
+                for(int i = 0; i < numOfActor; i++){
+                    //update actor
+                    stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, M/F) VALUES (?,?,?,?)");
+                    stmt.setInt(1,ActorId[i]);
+                    stmt.setString(2,ActorName[i]);
+                    stmt.setInt(3,ActorAge[i]);
+                    stmt.setString(4, String.valueOf(ActorGender[i]));
+
+                    stmt.executeUpdate();
+                    //update appearedIn
+                    stmt = conn.prepareStatement("INSERT INTO AppearedIn(ActorId, MovieId, Rating) VALUES (?,?,?)");
+                    stmt.setInt(1, ActorId[i]);
+                    stmt.setInt(2, Id);
+                    stmt.setInt(3, 0);
+
+                    stmt.executeUpdate();
+                }
+            }
             return true;
         }
         catch(SQLException ex){
@@ -278,13 +306,16 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addEmployee(int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
-            Date StartDate, double HourlyRate){
-        
+    /* 
+     * Add an employee with all information
+    */
+    public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
+            Date StartDate, int HourlyRate){
         try{
             PreparedStatement stmt = null;
+            //update person
             stmt= conn.prepareStatement("INSERT INTO Person(SSN, LastName, FirstName, Address, Zipcode, Telephone) VALUES (?,?,?,?,?,?)");
-            stmt.setInt(1, SSN);
+            stmt.setString(1, SSN);
             stmt.setString(2, LastName);
             stmt.setString(3, FirstName);
             stmt.setString(4, Address);
@@ -307,9 +338,9 @@ public class DBConnection {
             //update employee
             stmt = conn.prepareStatement("INSERT INTO Employee(Id, SSN, StartDate, HourlyRate) VALUES (?,?,?,?)");
             stmt.setInt(1, Id);
-            stmt.setInt(2,SSN);
+            stmt.setString(2,SSN);
             stmt.setDate(3,StartDate);
-            stmt.setDouble(4,HourlyRate);
+            stmt.setInt(4,HourlyRate);
             stmt.executeUpdate();
             
             return true;
@@ -319,29 +350,46 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean editEmployee(int Id, int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
-            Date StartDate, double HourlyRate){
+    public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT Id FROM moviedb.employee WHERE ? = Id");
-            stmt.setInt(1,Id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs != null){
-                //id exist
-                
-                return true;
-            }
-            else{
-                //id not exist
-                return false;
-            }
-        }catch(SQLException ex)
-        {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            stmt = conn.prepareStatement("UPDATE Movie SET Name = ?, Type = ?, distrFee = ?, NumOfCopies = ? WHERE Id = ?");
+            stmt.setString(1, name);
+            stmt.setString(2, Type);
+            BigDecimal fee = new BigDecimal(distrFee);
+            stmt.setBigDecimal(3,fee);
+            stmt.setInt(4, NumOfCopies);
+            stmt.setInt(5,Id);
+            stmt.executeUpdate();
+            
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
-    public boolean editCustomer(){
-        return true;
-    }
+//    public boolean editEmployee(int Id, int SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
+//            Date StartDate, double HourlyRate){
+//        try{
+//            PreparedStatement stmt = null;
+//            stmt = conn.prepareStatement("SELECT Id FROM moviedb.employee WHERE ? = Id");
+//            stmt.setInt(1,Id);
+//            ResultSet rs = stmt.executeQuery();
+//            if(rs != null){
+//                //id exist
+//                
+//                return true;
+//            }
+//            else{
+//                //id not exist
+//                return false;
+//            }
+//        }catch(SQLException ex)
+//        {
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+//            return false;
+//        }
+//    }
+//    public boolean editCustomer(){
+//        return true;
+//    }
 }
