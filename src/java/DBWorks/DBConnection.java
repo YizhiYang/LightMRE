@@ -384,7 +384,7 @@ public class DBConnection {
         catch(ParseException ex2){
             return false;
         }
-        
+
     }
     public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
@@ -479,16 +479,16 @@ public class DBConnection {
             stmt.setString(1, SSN);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
+                stmt = conn.prepareStatement("DELETE FROM Account WHERE Customer = ?");
+                stmt.setString(1, SSN);
+                stmt.executeUpdate();
+                
                 stmt = conn.prepareStatement("DELETE FROM Customer WHERE Id = ?");
                 stmt.setString(1,SSN);
                 stmt.executeUpdate();
 
                 stmt = conn.prepareStatement("DELETE FROM Person WHERE SSN = ?");
                 stmt.setString(1,SSN);
-                stmt.executeUpdate();
-
-                stmt = conn.prepareStatement("DELETE FROM Account WHERE Customer = ?");
-                stmt.setString(1, SSN);
                 stmt.executeUpdate();
             }
             else{
