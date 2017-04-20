@@ -217,10 +217,17 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addCustomer(int zipCode, String city, String state, String ssn, String lastName, String firstName,
-            String address, String telephone, int id, String email, int rating, String creditCardNumber,
-            Date dateOpened, String accountType){
+    public boolean addCustomer(String zp, String city, String state, String ssn, String lastName, String firstName,
+            String address, String telephone, String ID, String email, String RT, String creditCardNumber,
+            String dO, String accountType){
         try{
+            //parse variables from String
+            int zipCode = Integer.parseInt(zp);
+            int id = Integer.parseInt(ID);
+            int rating = Integer.parseInt(RT);
+            java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
+            Date dateOpened = new Date(gg.getTime());
+            //Adding new zipcodes
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
             stmt.setInt(1, zipCode);
@@ -255,6 +262,8 @@ public class DBConnection {
             return true;
         } catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }catch(ParseException ex2){
             return false;
         }
         
@@ -310,16 +319,16 @@ public class DBConnection {
     }
     /* 
      * Add an employee with all information
+     * Tested
     */
     public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
             String Sd, String Hr) {
         
         try{
             PreparedStatement stmt = null;
-            
+            //changing strings to correct types
             int Zipcode = Integer.parseInt(Zp);
             int HourlyRate = Integer.parseInt(Hr);
-            
             java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(Sd);
             Date StartDate = new Date(gg.getTime());
              //update address
@@ -363,8 +372,10 @@ public class DBConnection {
         catch(ParseException ex2){
             return false;
         }
-       
     }
+    /*
+     * Edit the movie
+    */
     public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
             PreparedStatement stmt = null;
