@@ -311,15 +311,17 @@ public class DBConnection {
     }
     /* 
      * Add an employee with all information
+     * tested
     */
-    public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
-            String Sd, String Hr) {
+   public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
+            String Sd, String Hr,String username, String password, String isM) {
         
         try{
             PreparedStatement stmt = null;
             
             int Zipcode = Integer.parseInt(Zp);
             int HourlyRate = Integer.parseInt(Hr);
+            int isManager = Integer.parseInt(isM);
             
             java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(Sd);
             Date StartDate = new Date(gg.getTime());
@@ -348,11 +350,14 @@ public class DBConnection {
             }
             Id = Id + 1;
             //update employee
-            stmt = conn.prepareStatement("INSERT INTO Employee(Id, SSN, StartDate, HourlyRate) VALUES (?,?,?,?)");
+            stmt = conn.prepareStatement("INSERT INTO Employee(Id, SSN, StartDate, HourlyRate,username,password,isManager) VALUES (?,?,?,?,?,?,?)");
             stmt.setInt(1, Id);
             stmt.setString(2,SSN);
             stmt.setDate(3,StartDate);
             stmt.setInt(4,HourlyRate);
+            stmt.setString(5,username);
+            stmt.setString(6,password);
+            stmt.setInt(7,isManager);
             stmt.executeUpdate();
             
             return true;
@@ -364,7 +369,7 @@ public class DBConnection {
         catch(ParseException ex2){
             return false;
         }
-       
+        
     }
     public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
