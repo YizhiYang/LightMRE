@@ -86,30 +86,24 @@ public class AddEmployee extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        try {
-            DBConnection DBConnect = new DBConnection();
+//            DBConnection DBConnect = new DBConnection();
+//            
+//            String lastName = (String)request.getParameter("lastName");
+//            String firstName = (String)request.getParameter("firstName");
+//            String SSN = (String)request.getParameter("SSN");
+//            String phoneNumber = (String)request.getParameter("phoneNumber");
+//            String address = (String)request.getParameter("address");
+//            String city = (String)request.getParameter("city");
+//            String state = (String)request.getParameter("state");
+//            String zip = (String)request.getParameter("zip");
+//            String date = (String)request.getParameter("date");
+//            String rate = (String)request.getParameter("rate");
+//            
+//            DBConnect.addEmployee(SSN, lastName, firstName, address, city, state, zip, phoneNumber, "2017-10-01", "15", "fakeEmployee", "123", "1");
             
-            String lastName = (String)request.getAttribute("lastName");
-            String firstName = (String)request.getAttribute("firstName");
-            String SSN = (String)request.getAttribute("SSN");
-            String phoneNumber = (String)request.getAttribute("phoneNumber");
-            String address = (String)request.getAttribute("address");
-            String city = (String)request.getAttribute("city");
-            String state = (String)request.getAttribute("state");
-            String zip = (String)request.getAttribute("zip");
-            String date = (String)request.getAttribute("date");
-            String rate = (String)request.getAttribute("rate");
-            
-            int zipInt = Integer.parseInt(zip);
-            double rateDoule = Double.parseDouble(rate);
-            DateFormat formatter = new SimpleDateFormat("yy-MMM-dd");
-            Date dateDate = (Date) formatter.parse(date);
-            
-            
-            //processRequest(request, response);
-        } catch (ParseException ex) {
-            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+            processRequest(request, response);
+
     }
 
     /**

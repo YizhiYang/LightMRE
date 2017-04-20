@@ -20,6 +20,10 @@
         <servlet-name>QueryAllCustomers</servlet-name>
         <servlet-class>QueryAllCustomers</servlet-class>
     </servlet>
+        <servlet>
+        <servlet-name>AddEmployee</servlet-name>
+        <servlet-class>AddEmployee</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
         <url-pattern>/HomePageServ</url-pattern>
@@ -40,6 +44,12 @@
         <servlet-name>QueryAllCustomers</servlet-name>
         <url-pattern>/QueryAllCustomers</url-pattern>
     </servlet-mapping>
+    
+        <servlet-mapping>
+        <servlet-name>AddEmployee</servlet-name>
+        <url-pattern>/AddEmployee</url-pattern>
+    </servlet-mapping>
+    
     <session-config>
         <session-timeout>
             30
