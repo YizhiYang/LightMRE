@@ -311,9 +311,9 @@ public class DBConnection {
     }
     /* 
      * Add an employee with all information
-     * tested
+     * TESTED
     */
-   public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
+    public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
             String Sd, String Hr,String username, String password, String isM) {
         
         try{
@@ -474,13 +474,22 @@ public class DBConnection {
             return false;
         }
     }
+    /*
+     * get all the customer mailing list with Last Name, First Name, Address, and city
+     * 6 outputs in total
+     * TESTED
+    */
     public ResultSet getCustomerMailing(){
         try{
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT Person.LastName, Person.FirstName, Person.Address, Location.City,"
-                    + " Location.State, Location.ZipCode"
-                    + "FROM Person, Location, Customer "
-                    + " WHERE Customer.Id = Person.SSN AND Person.ZipCode = Location.ZipCode");
+            stmt = conn.prepareStatement(
+                    " SELECT "
+                            + "Person.LastName, Person.FirstName, Person.Address, Location.City,"
+                    + " Location.State, Location.ZipCode "
+                    + "FROM "
+                    + " Person, Location, Customer "
+                    + "WHERE "
+                    + "      Customer.Id = Person.SSN AND Person.ZipCode = Location.ZipCode");
             ResultSet rs = stmt.executeQuery();
             return rs;
         }catch(SQLException ex){
@@ -524,6 +533,12 @@ public class DBConnection {
             return 0;
         }
     }
+    /*
+     * Check whether the username is taken or not
+     * Return 1 if username is not taken
+     *        -1 if username is taken
+     * TESTED
+    */
     public int existingUsername(String username){
         try{
             PreparedStatement stmt = null;
