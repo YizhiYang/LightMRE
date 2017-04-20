@@ -482,4 +482,40 @@ public class DBConnection {
             return null;
         }
     }
+    public boolean existingCustomer(String username, String password){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT * FROM Account WHERE username = ? AND password = ?");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next() == false){
+                return false;
+            }
+            return true;
+            
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public int existingEmployee(String username, String password) throws SQLException{
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT * FROM employee WHERE username = ? AND password = ?");
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next() == false){
+                return 0;
+            }
+            else if(rs.getBoolean("isManager") == true){
+                return 2;
+            }
+            return 1;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
 }
