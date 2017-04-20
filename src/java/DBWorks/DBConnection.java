@@ -318,7 +318,7 @@ public class DBConnection {
         
         try{
             PreparedStatement stmt = null;
-            
+             
             int Zipcode = Integer.parseInt(Zp);
             int HourlyRate = Integer.parseInt(Hr);
             int isManager = Integer.parseInt(isM);
@@ -519,6 +519,30 @@ public class DBConnection {
                 return 2;
             }
             return 1;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+    public int existingUsername(String username){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT * FROM employee WHERE username = ?");
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next() == false){
+                stmt = conn.prepareStatement("SELECT * FROM Account WHERE username = ?");
+                stmt.setString(1, username);
+                rs = stmt.executeQuery();
+                if(rs.next() == false){
+                    return 1;
+                }
+                return -1;
+            }
+            else{
+                return -1;
+            }
+            
         }catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return 0;
