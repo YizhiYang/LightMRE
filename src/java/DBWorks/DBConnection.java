@@ -276,11 +276,27 @@ public class DBConnection {
         }
     }
     /*
-        Add movie
+     * Add Movie with actors in it
+     * Takes in the info of movie and actors, actors info are packed inside of array. 
+     * Ex:
+     * String[] ActorName = {"JOE","AHUA","HI","GA]"};
+        String[] ActorAge = {"2","2","2","2"};
+        String[] ActorGender = {"M","F","M","F"};
+     * TESTED
     */
-    public boolean addMovie(int Id, String Name, String Type, int Rating, double DistrFee, int NumCopies, int[] ActorId, String[] ActorName, int[] ActorAge, char[] ActorGender){
+    public boolean addMovie(String Name, String Type, String Rt, String DistrFee, String NC, String[] ActorName, String[] ActorAge, String[] ActorGender){
         try{
             PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT MAX(Id) FROM Movie");
+            ResultSet rs = stmt.executeQuery();
+            int Id = 1;
+            while(rs.next()){
+                Id = rs.getInt(1);
+            }
+            Id = Id + 1;            
+        
+            int Rating = Integer.parseInt(Rt);
+            int NumCopies = Integer.parseInt(NC);           
             
             //add information of movie
             stmt= conn.prepareStatement("INSERT INTO Movie(Id, Name, Type, Rating, DistrFee, NumCopies) VALUES (?,?,?,?,?,?)");
@@ -297,20 +313,30 @@ public class DBConnection {
             stmt.executeUpdate();
             
             //add information of Actor in movie and AppearedIn
-            int numOfActor = ActorId.length;
-            if(ActorId != null && ActorName != null && ActorAge != null && ActorGender != null){
+            int numOfActor = ActorName.length;
+            if( ActorName != null && ActorAge != null && ActorGender != null){
                 for(int i = 0; i < numOfActor; i++){
                     //update actor
-                    stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, M/F) VALUES (?,?,?,?)");
-                    stmt.setInt(1,ActorId[i]);
+                    stmt = conn.prepareStatement("SELECT MAX(Id) FROM Actor");
+                    rs = stmt.executeQuery();
+                    int ActorId = 1;
+                    while(rs.next()){
+                        ActorId = rs.getInt(1);
+                    }
+                    ActorId = ActorId + 1;
+                    
+                    int age = Integer.parseInt(ActorAge[i]);
+                    
+                    stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, `M/F`) VALUES (?,?,?,?)");
+                    stmt.setInt(1,ActorId);
                     stmt.setString(2,ActorName[i]);
-                    stmt.setInt(3,ActorAge[i]);
-                    stmt.setString(4, String.valueOf(ActorGender[i]));
+                    stmt.setInt(3,age);
+                    stmt.setString(4, ActorGender[i]);
 
                     stmt.executeUpdate();
                     //update appearedIn
                     stmt = conn.prepareStatement("INSERT INTO AppearedIn(ActorId, MovieId, Rating) VALUES (?,?,?)");
-                    stmt.setInt(1, ActorId[i]);
+                    stmt.setInt(1, ActorId);
                     stmt.setInt(2, Id);
                     stmt.setInt(3, 0);
 
