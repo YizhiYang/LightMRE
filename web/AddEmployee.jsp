@@ -173,7 +173,7 @@
         </div>
 
         <div class="container">  
-            <form id="contact" action="http://localhost:8080/LightMRE/AddEmployee" method="post">
+            <form id="contact" action="http://local host:8080/LightMRE/AddEmployee" method="post">
                 <h3>Add Employee</h3>
                 <h4>Employee details</h4>
                 <fieldset>
@@ -207,13 +207,13 @@
                     <input name="rate" placeholder="Hourly Rate" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
-                    <input name="userName" placeholder="User Name" type="text" tabindex="10" required>
+                    <input name="userName" placeholder="User Name" type="text" tabindex="11" required>
                 </fieldset>
                 <fieldset>
-                    <input name="userPassword" placeholder="User Password" type="text" tabindex="10" required>
+                    <input name="userPassword" placeholder="User Password" type="text" tabindex="12" required>
                 </fieldset>
                 <fieldset>
-                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="10" required>
+                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="13" required>
                 </fieldset>
                 <fieldset>
                     <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
