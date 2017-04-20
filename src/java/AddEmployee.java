@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -101,8 +102,15 @@ public class AddEmployee extends HttpServlet {
             String zip = (String)request.getParameter("zip");
             String date = (String)request.getParameter("date");
             String rate = (String)request.getParameter("rate");
+            String userName = (String)request.getParameter("userName");
+            String userPassword = (String)request.getParameter("userPassword");
+            String type = (String)request.getParameter("type");
             
-            DBConnect.addEmployee(SSN, lastName, firstName, address, city, state, zip, phoneNumber, "2017-10-01", "15", "fakeEmployee", "123", "1");
+            DBConnect.addEmployee(SSN, lastName, firstName, address, city, state, zip, phoneNumber, date, rate, userName, userPassword, type);
+            
+                RequestDispatcher dispatcher
+                        = request.getRequestDispatcher("ListOfEmployees");
+                dispatcher.forward(request, response);
             
             if(zip == null)
                 processRequest(request, response);
