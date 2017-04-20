@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -309,10 +311,23 @@ public class DBConnection {
     /* 
      * Add an employee with all information
     */
-    public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
-            Date StartDate, int HourlyRate){
+    public boolean addEmployee(String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
+            String Sd, String Hr) {
+        
         try{
             PreparedStatement stmt = null;
+            
+            int Zipcode = Integer.parseInt(Zp);
+            int HourlyRate = Integer.parseInt(Hr);
+            
+            java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(Sd);
+            Date StartDate = new Date(gg.getTime());
+             //update address
+            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+            stmt.setInt(1, Zipcode);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.executeUpdate();
             //update person
             stmt= conn.prepareStatement("INSERT INTO Person(SSN, LastName, FirstName, Address, Zipcode, Telephone) VALUES (?,?,?,?,?,?)");
             stmt.setString(1, SSN);
@@ -322,19 +337,15 @@ public class DBConnection {
             stmt.setInt(5, Zipcode);
             stmt.setString(6, Telephone);
             stmt.executeUpdate();
-            
-            //update address
-            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
-            stmt.setInt(1, Zipcode);
-            stmt.setString(2, city);
-            stmt.setString(3, state);
-            stmt.executeUpdate();
-            
+      
             //get the newest ID in employee
             stmt = conn.prepareStatement("SELECT MAX(Id) FROM Employee");
             ResultSet rs = stmt.executeQuery();
-            int Id = ((Number) rs.getObject(1)).intValue() + 1;
-            
+            int Id = 1;
+            while(rs.next()){
+                Id = rs.getInt(1);
+            }
+            Id = Id + 1;
             //update employee
             stmt = conn.prepareStatement("INSERT INTO Employee(Id, SSN, StartDate, HourlyRate) VALUES (?,?,?,?)");
             stmt.setInt(1, Id);
@@ -349,6 +360,10 @@ public class DBConnection {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+        catch(ParseException ex2){
+            return false;
+        }
+       
     }
     public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
