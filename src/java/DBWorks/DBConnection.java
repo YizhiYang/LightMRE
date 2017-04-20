@@ -205,7 +205,6 @@ public class DBConnection {
     }
     
     public boolean deleteEmployee(String id){
-        
         try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("DELETE FROM Employee WHERE Id = ?");
@@ -224,12 +223,12 @@ public class DBConnection {
      * TESTED
     */
     public boolean addCustomer(String zp, String city, String state, String ssn, String lastName, String firstName,
-            String address, String telephone, String ID, String email, String RT, String creditCardNumber,
+            String address, String telephone, String email, String RT, String creditCardNumber,
             String dO, String accountType, String username, String password){
         try{
             //parse variables from String
             int zipCode = Integer.parseInt(zp);
-            int id = Integer.parseInt(ID);
+            
             int rating = Integer.parseInt(RT);
             java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
             Date dateOpened = new Date(gg.getTime());
@@ -258,8 +257,15 @@ public class DBConnection {
             stmt.setString(4, creditCardNumber);
             stmt.executeUpdate();
             
+            stmt = conn.prepareStatement("SELECT MAX(Id) FROM Account");
+            ResultSet rs = stmt.executeQuery();
+            int Id = 1;
+            while(rs.next()){
+                Id = rs.getInt(1);
+            }
+            Id = Id + 1;    
             stmt = conn.prepareStatement("INSERT INTO Account(Id, DateOpened, Type, Customer,username,password) VALUES (?, ?, ?, ?,?,?)");
-            stmt.setInt(1, id);
+            stmt.setInt(1, Id);
             stmt.setDate(2, dateOpened);
             stmt.setString(3, accountType);
             stmt.setString(4, ssn);
@@ -274,19 +280,20 @@ public class DBConnection {
         }catch(ParseException ex2){
             return false;
         }
+        
     }
     /*
      * Add Movie with actors in it
      * Takes in the info of movie and actors, actors info are packed inside of array. 
      * Ex:
-     * String[] ActorName = {"JOE","AHUA","HI","GA]"};
-        String[] ActorAge = {"2","2","2","2"};
-        String[] ActorGender = {"M","F","M","F"};
+       t.addMovie("FIGHTTTT", "Drama", "0", "100.00", "5", "JOE,gag,123,as","2,2,2,2","M,F,M,F");
      * TESTED
     */
-    public boolean addMovie(String Name, String Type, String Rt, String DistrFee, String NC, String[] ActorName, String[] ActorAge, String[] ActorGender){
+    public boolean addMovie(String Name, String Type, String Rt, String DistrFee, String NC, String AN, String AA, String AG){
         try{
             PreparedStatement stmt = null;
+            
+            //add Movie
             stmt = conn.prepareStatement("SELECT MAX(Id) FROM Movie");
             ResultSet rs = stmt.executeQuery();
             int Id = 1;
@@ -312,7 +319,11 @@ public class DBConnection {
             
             stmt.executeUpdate();
             
+            
             //add information of Actor in movie and AppearedIn
+            String[] ActorName = AN.split(",");
+            String[] ActorAge = AA.split(",");
+            String[] ActorGender = AG.split(",");
             int numOfActor = ActorName.length;
             if( ActorName != null && ActorAge != null && ActorGender != null){
                 for(int i = 0; i < numOfActor; i++){
@@ -410,7 +421,6 @@ public class DBConnection {
         catch(ParseException ex2){
             return false;
         }
-
     }
     public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
@@ -615,5 +625,6 @@ public class DBConnection {
             return 0;
         }
     }
+    
 }
 
