@@ -223,13 +223,13 @@ public class DBConnection {
      * TESTED
     */
     public boolean addCustomer(String zp, String city, String state, String ssn, String lastName, String firstName,
-            String address, String telephone, String email, String RT, String creditCardNumber,
+            String address, String telephone, String email, String creditCardNumber,
             String dO, String accountType, String username, String password){
         try{
             //parse variables from String
             int zipCode = Integer.parseInt(zp);
             
-            int rating = Integer.parseInt(RT);
+            //int rating = Integer.parseInt(RT);
             java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
             Date dateOpened = new Date(gg.getTime());
             //Adding new zipcodes
@@ -253,7 +253,7 @@ public class DBConnection {
             stmt = conn.prepareStatement("INSERT INTO Customer(Id, Email, Rating, CreditCardNumber) VALUES(?, ?, ?, ?)");
             stmt.setString(1, ssn);
             stmt.setString(2, email);
-            stmt.setInt(3, rating);
+            stmt.setInt(3, 0);
             stmt.setString(4, creditCardNumber);
             stmt.executeUpdate();
             
@@ -655,6 +655,151 @@ public class DBConnection {
             return 0;
         }
     }
-    
+    /*
+     * edit Customer information
+    ex: t.editCustomer("555-55-6555", "HLLO", "MOTO", "SSR", "1", "Heaven2", "Sky", "542-542-1234", "HACK@N.com", "0","123-123-123", "2010-10-10", "unlimited-2","gaga", "taata");
+     * TESTED ; need discussion
+    */
+    public boolean editCustomer(String SSN, String lastName, String firstName,
+            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
+            String dO, String accountType, String username, String password){       
+        try{
+            PreparedStatement stmt = null;
+            //check if the customer exist         
+            stmt = conn.prepareStatement("SELECT * FROM Person WHERE SSN = ?");
+            stmt.setString(1,SSN);
+            ResultSet rs = stmt.executeQuery();
+            
+            //does Customer exist?
+            if(rs.next()){ 
+                int zipCode = Integer.parseInt(zp);
+                int rating = Integer.parseInt(RT);
+                java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
+                Date dateOpened = new Date(gg.getTime());
+                //update location if it's new  
+                stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+                stmt.setInt(1, zipCode);
+                stmt.setString(2, city);
+                stmt.setString(3, state);
+                stmt.executeUpdate();
+                //update the person 
+                stmt= conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
+                stmt.setString(1, lastName);
+                stmt.setString(2, firstName);
+                stmt.setString(3, address);
+                stmt.setInt(4, zipCode);
+                stmt.setString(5, telephone);
+                stmt.setString(6, SSN);
+                stmt.executeUpdate();
+                //update customer
+                stmt = conn.prepareStatement("UPDATE Customer SET Email = ?, Rating = ?, CreditCardNumber = ? WHERE Id = ?");
+                stmt.setString(1, email);
+                stmt.setInt(2,rating);
+                stmt.setString(3,creditCardNumber);
+                stmt.setString(4, SSN);
+                stmt.executeUpdate();
+
+                //update
+                stmt = conn.prepareStatement("UPDATE Account Set DateOpened = ?, Type = ?, username = ?, password = ? WHERE Customer = ?");
+                stmt.setDate(1, dateOpened);
+                stmt.setString(2,accountType);
+                stmt.setString(3, username);
+                stmt.setString(4,password);
+                stmt.setString(5, SSN);
+                stmt.executeUpdate();
+                return true;
+            }
+            return false;
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }catch(ParseException e2){
+            return false;
+        }
+    }
+    /*
+     * Add Actor
+     * TESTED
+    */
+    public boolean addActor(String Name, String Age, String mf){
+        try{
+            PreparedStatement stmt = null;
+            //split actors attributes
+            String[] aName = Name.split(",");
+            String[] aAge = Age.split(",");
+            String[] amf = mf.split(",");
+            if(aName != null && aAge != null && amf != null){
+                for(int i = 0; i < aName.length;i++){
+                    //add actors          
+                    stmt = conn.prepareStatement("SELECT MAX(Id) FROM Actor");
+                    ResultSet rs = stmt.executeQuery();
+                    int ActorId = 1;
+                    while(rs.next()){
+                        ActorId = rs.getInt(1);
+                    }
+                    ActorId = ActorId + 1;
+                    
+                    int age = Integer.parseInt(aAge[i]);
+                    
+                    stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, `M/F`) VALUES (?,?,?,?)");
+                    stmt.setInt(1,ActorId);
+                    stmt.setString(2,aName[i]);
+                    stmt.setInt(3,age);
+                    stmt.setString(4, amf[i]);
+
+                    stmt.executeUpdate();
+                }
+            }
+            return true;
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    /*
+     * Edit Actor
+     * TESTED
+    */
+    public boolean editActor(String Id, String Name, String Age, String mf){
+        try{
+            PreparedStatement stmt = null;
+            //split actors attributes
+            stmt = conn.prepareStatement("UPDATE Actor SET Name = ?, Age = ?, `M/F` = ? WHERE Id = ?");
+            stmt.setString(1,Name);
+            stmt.setInt(2, Integer.parseInt(Age));
+            stmt.setString(3, mf);
+            stmt.setString(4, Id);
+            stmt.executeUpdate();
+            return true;
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
+    /*
+     * Delete Actor
+     * TESTED
+    */
+    public boolean deleteActor(String Id){
+        try{
+            PreparedStatement stmt = null;
+            //split actors attributes
+            stmt = conn.prepareStatement("DELETE FROM AppearedIn WHERE ActorId = ?");
+            stmt.setInt(1, Integer.parseInt(Id));
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("DELETE FROM Actor WHERE Id = ?");
+            stmt.setInt(1,Integer.parseInt(Id));
+            stmt.executeUpdate();
+            
+            return true;
+        }catch(SQLException ex)
+        {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }
+    }
 }
 
