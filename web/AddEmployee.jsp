@@ -30,7 +30,7 @@
         }
 
         body {
-       
+
             color: #777;
             background: -webkit-linear-gradient(left, #25c481, #25b7c4);
             background: linear-gradient(to right, #25c481, #25b7c4);
@@ -205,6 +205,15 @@
                 </fieldset>
                 <fieldset>
                     <input name="rate" placeholder="Hourly Rate" type="text" tabindex="10" required>
+                </fieldset>
+                <fieldset>
+                    <input name="userName" placeholder="User Name" type="text" tabindex="10" required>
+                </fieldset>
+                <fieldset>
+                    <input name="userPassword" placeholder="User Password" type="text" tabindex="10" required>
+                </fieldset>
+                <fieldset>
+                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
                     <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
