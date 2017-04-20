@@ -25,6 +25,7 @@
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
                 <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="javascript:document.submitForm.submit()">Employees</a>
+                <a class = "HomeButton" onClick="forwardToCustomerPageServlet()" style="text-decoration:none">Customers</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">More</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
             </div>
@@ -113,6 +114,10 @@
                 var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Are you sure you want to remove " + name + "?");
                 location.href = "HomePageServ?MovieName=" + name;
+            }
+
+            function forwardToCustomerPageServlet() {
+                window.location = "QueryAllCustomers"
             }
         </script>
     </body>
