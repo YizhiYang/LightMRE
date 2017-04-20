@@ -8,6 +8,7 @@ import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,23 +87,30 @@ public class AddEmployee extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-//            DBConnection DBConnect = new DBConnection();
-//            
-//            String lastName = (String)request.getParameter("lastName");
-//            String firstName = (String)request.getParameter("firstName");
-//            String SSN = (String)request.getParameter("SSN");
-//            String phoneNumber = (String)request.getParameter("phoneNumber");
-//            String address = (String)request.getParameter("address");
-//            String city = (String)request.getParameter("city");
-//            String state = (String)request.getParameter("state");
-//            String zip = (String)request.getParameter("zip");
-//            String date = (String)request.getParameter("date");
-//            String rate = (String)request.getParameter("rate");
-//            
-//            DBConnect.addEmployee(SSN, lastName, firstName, address, city, state, zip, phoneNumber, "2017-10-01", "15", "fakeEmployee", "123", "1");
+        try {
+            DBConnection DBConnect = new DBConnection();
+            DBConnect.connectDB();
             
-
-            processRequest(request, response);
+            String lastName = (String)request.getParameter("lastName");
+            String firstName = (String)request.getParameter("firstName");
+            String SSN = (String)request.getParameter("SSN");
+            String phoneNumber = (String)request.getParameter("phoneNumber");
+            String address = (String)request.getParameter("address");
+            String city = (String)request.getParameter("city");
+            String state = (String)request.getParameter("state");
+            String zip = (String)request.getParameter("zip");
+            String date = (String)request.getParameter("date");
+            String rate = (String)request.getParameter("rate");
+            
+            DBConnect.addEmployee(SSN, lastName, firstName, address, city, state, zip, phoneNumber, "2017-10-01", "15", "fakeEmployee", "123", "1");
+            
+            if(zip == null)
+                processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
