@@ -40,7 +40,7 @@
                             <th>Start Date</th>
                             <th>Hourly Rate</th>
                             <th></th>
-                            <th></th>
+                             <th><button onclick="location.href = 'AddEmployee.jsp'">Add Employee</button></th>
                         </tr>
                     </thead>
                 </table>
