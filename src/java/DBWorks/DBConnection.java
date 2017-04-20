@@ -440,35 +440,65 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean editEmployee(int Id, String SSN, String LastName, String FirstName, String Address, String city, String state, int Zipcode, String Telephone, 
-            Date StartDate, int HourlyRate){
+    /*
+     * Edit information of an employee
+     * EX;t.editEmployee("3","442-55-6666","gggA","as","1234","Heaven","Sky","0","987-654-3211","2009-10-10","10","employee3","employee","0");
+     * TESTED
+    */
+    public boolean editEmployee(String Id, String SSN, String LastName, String FirstName, String Address, String city, String state, String Zipcode, String Telephone, 
+            String StartDate, String HourlyRate, String username, String password, String isM){
+        //String SSN, String LastName, String FirstName, String Address, String city, String state, String Zp, String Telephone, 
+            //String Sd, String Hr,String username, String password, String isM
         try{
             PreparedStatement stmt = null;
-            stmt= conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
-            stmt.setString(1, LastName);
-            stmt.setString(2, FirstName);
-            stmt.setString(3, Address);
-            stmt.setInt(4, Zipcode);
-            stmt.setString(5, Telephone);
-            stmt.setString(6, SSN);
-            stmt.executeUpdate();
-            //add new zipcode if didn't exist
-            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
-            stmt.setInt(1, Zipcode);
-            stmt.setString(2, city);
-            stmt.setString(3, state);
-            stmt.executeUpdate();
-            //update employee table
-            stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ? WHERE Id = ?");
-            stmt.setDate(1,StartDate);
-            stmt.setInt(2,HourlyRate);
-            stmt.setInt(3,Id);
-            stmt.executeUpdate();
+            //check if the employee exist
+            int id = Integer.valueOf(Id);
+            stmt = conn.prepareStatement("SELECT * FROM Employee WHERE Id = ?");
+            stmt.setInt(1,id);
+            ResultSet rs = stmt.executeQuery();
             
-            return true;
+            //this employe id exist?
+            if(rs.next()){ 
+                int zc = Integer.parseInt(Zipcode);
+                
+                java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(StartDate);
+                Date sd = new Date(gg.getTime());
+                int hr = Integer.parseInt(HourlyRate);
+                
+                stmt= conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
+                stmt.setString(1, LastName);
+                stmt.setString(2, FirstName);
+                stmt.setString(3, Address);
+                stmt.setInt(4, zc);
+                stmt.setString(5, Telephone);
+                stmt.setString(6, SSN);
+                stmt.executeUpdate();
+                //add new zipcode if didn't exist
+                stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+                stmt.setInt(1, zc);
+                stmt.setString(2, city);
+                stmt.setString(3, state);
+                stmt.executeUpdate();
+                
+                int iM = Integer.parseInt(isM);
+                //update employee table
+                stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ?, username = ?, password = ?, isManager = ? WHERE Id = ?");
+                stmt.setDate(1,sd);
+                stmt.setInt(2,hr);
+                stmt.setString(3, username);
+                stmt.setString(4, password);
+                stmt.setInt(5, iM);
+                stmt.setInt(6,id);
+                stmt.executeUpdate();
+
+                return true;
+            }
+            return false;
         }catch(SQLException ex)
         {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+            return false;
+        }catch(ParseException e2){
             return false;
         }
     }
