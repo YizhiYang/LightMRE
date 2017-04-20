@@ -119,20 +119,6 @@ public class HomePageServ extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("UserName", request.getParameter("name"));
             session.setAttribute("Password", request.getParameter("password"));
-
-            char accountType = ' ';
-
-            if((request.getParameter("name").length() != 0)){
-                if ((request.getParameter("name").charAt(0)) == 'c') {
-                    accountType = 'c';
-                } else if ((request.getParameter("name").charAt(0)) == 'e') {
-                    accountType = 'e';
-                } else if ((request.getParameter("name").charAt(0)) == 'm') {
-                    accountType = 'm';
-                }
-            }
-
-            // Connect to the DB
             DBConnection DBConnect = new DBConnection();
             boolean result = false;
             try {
@@ -140,6 +126,28 @@ public class HomePageServ extends HttpServlet {
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
             }
+            String username = request.getParameter("name");
+            String password = request.getParameter("password");
+            Boolean isCustomer = DBConnect.existingCustomer(username, password);
+            char accountType = ' ';
+
+            if(isCustomer){
+                accountType = 'c';
+            }
+            else{
+                int type = DBConnect.existingEmployee(username, password);
+                if(type == 1){
+                    accountType = 'e';
+                }
+                else if(type == 2){
+                    accountType = 'm';
+                }
+                
+            }
+
+
+            // Connect to the DB
+            
 
             session.setAttribute("r", request);
 
