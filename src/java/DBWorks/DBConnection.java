@@ -218,10 +218,22 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addCustomer(int zipCode, String city, String state, String ssn, String lastName, String firstName,
-            String address, String telephone, int id, String email, int rating, String creditCardNumber,
-            Date dateOpened, String accountType){
+    /*
+     * Add a customer information
+     * Add information in Location(if not exist), Person, Customer, and Account table
+     * TESTED
+    */
+    public boolean addCustomer(String zp, String city, String state, String ssn, String lastName, String firstName,
+            String address, String telephone, String ID, String email, String RT, String creditCardNumber,
+            String dO, String accountType, String username, String password){
         try{
+            //parse variables from String
+            int zipCode = Integer.parseInt(zp);
+            int id = Integer.parseInt(ID);
+            int rating = Integer.parseInt(RT);
+            java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
+            Date dateOpened = new Date(gg.getTime());
+            //Adding new zipcodes
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
             stmt.setInt(1, zipCode);
@@ -246,19 +258,22 @@ public class DBConnection {
             stmt.setString(4, creditCardNumber);
             stmt.executeUpdate();
             
-            stmt = conn.prepareStatement("INSERT INTO Account(Id, DateOpened, Type, Customer) VALUES (?, ?, ?, ?");
+            stmt = conn.prepareStatement("INSERT INTO Account(Id, DateOpened, Type, Customer,username,password) VALUES (?, ?, ?, ?,?,?)");
             stmt.setInt(1, id);
             stmt.setDate(2, dateOpened);
             stmt.setString(3, accountType);
             stmt.setString(4, ssn);
+            stmt.setString(5,username);
+            stmt.setString(6,password);
             stmt.executeUpdate();
 
             return true;
         } catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        }catch(ParseException ex2){
+            return false;
         }
-        
     }
     /*
         Add movie
@@ -452,22 +467,33 @@ public class DBConnection {
             return false;
         }
     }
+    /*
+     * Delete Customer
+     * This method will check if that user exist before deleting, to avoid deletion of employee
+     * TESTED
+    */
     public boolean deleteCustomer(String SSN){
         try{
             PreparedStatement stmt = null;
-            
-            stmt = conn.prepareStatement("DELETE FROM Account WHERE Customer = ?");
+            stmt = conn.prepareStatement("SELECT Id FROM Customer WHERE Id = ?");
             stmt.setString(1, SSN);
-            stmt.executeUpdate();
-            
-            stmt = conn.prepareStatement("DELETE FROM Customer WHERE Id = ?");
-            stmt.setString(1,SSN);
-            stmt.executeUpdate();
-            
-            stmt = conn.prepareStatement("DELETE FROM Person WHERE SSN = ?");
-            stmt.setString(1,SSN);
-            stmt.executeUpdate();
-            
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                stmt = conn.prepareStatement("DELETE FROM Customer WHERE Id = ?");
+                stmt.setString(1,SSN);
+                stmt.executeUpdate();
+
+                stmt = conn.prepareStatement("DELETE FROM Person WHERE SSN = ?");
+                stmt.setString(1,SSN);
+                stmt.executeUpdate();
+
+                stmt = conn.prepareStatement("DELETE FROM Account WHERE Customer = ?");
+                stmt.setString(1, SSN);
+                stmt.executeUpdate();
+            }
+            else{
+                return false;
+            }
             return true;
         }catch(SQLException ex){
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);

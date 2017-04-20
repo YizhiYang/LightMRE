@@ -207,13 +207,13 @@
                     <input name="rate" placeholder="Hourly Rate" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
-                    <input name="userName" placeholder="User Name" type="text" tabindex="11" required>
+                    <input name="userName" placeholder="User Name" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
-                    <input name="userPassword" placeholder="User Password" type="text" tabindex="12" required>
+                    <input name="userPassword" placeholder="User Password" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
-                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="13" required>
+                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="10" required>
                 </fieldset>
                 <fieldset>
                     <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
