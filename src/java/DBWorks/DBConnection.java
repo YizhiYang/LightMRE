@@ -835,5 +835,191 @@ public class DBConnection {
             return null;
         }
     }
+    public ResultSet queryRatableMovies(String accountId, String customerId){
+        try {
+            int accId = Integer.parseInt(accountId);
+            int custId = Integer.parseInt(customerId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Id, moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movie\n" +
+            "WHERE\n" +
+            "    moviedb.movie.Id IN (SELECT \n" +
+            "            moviedb.rental.MovieId\n" +
+            "        FROM\n" +
+            "            moviedb.rental,\n" +
+            "            moviedb.order\n" +
+            "        WHERE\n" +
+            "            moviedb.rental.OrderId = moviedb.order.Id\n" +
+            "                AND moviedb.rental.AccountId = ?\n" +
+            "                AND moviedb.order.ReturnDate IS NOT NULL)\n" +
+            "        AND moviedb.movie.Id NOT IN (SELECT \n" +
+            "            moviedb.rating.MovieId\n" +
+            "        FROM\n" +
+            "            moviedb.rating\n" +
+            "        WHERE\n" +
+            "            moviedb.rating.CustomerId = ?);");
+            stmt.setInt(1, accId);
+            stmt.setInt(2, custId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public boolean addRating(String MovieId, String CustomerId, String rating){
+        try{
+            int movId = Integer.parseInt(MovieId);
+            int custId = Integer.parseInt(CustomerId);
+            int rat = Integer.parseInt(rating);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("INSERT INTO Rating(MovieId, CustomerId, Rating) VALUES (?, ?, ?)");
+            stmt.setInt(1, movId);
+            stmt.setInt(2, custId);
+            stmt.setInt(3, rat);
+            stmt.executeUpdate();
+            return true;
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } 
+    }
+    public boolean updateMovieRatings(String MovieId){
+        try{
+            int movId = Integer.parseInt(MovieId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("UPDATE moviedb.movie,\n" +
+            "    moviedb.rating \n" +
+            "SET \n" +
+            "    moviedb.movie.Rating = (SELECT \n" +
+            "            AVG(moviedb.rating.Rating)\n" +
+            "        FROM\n" +
+            "            moviedb.rating\n" +
+            "        WHERE\n" +
+            "            moviedb.rating.MovieId = ?);");
+            stmt.setInt(1, movId);
+            stmt.executeUpdate();
+            return true;
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public ResultSet queryOrderHistory(String customerId){
+        try{
+            int custId = Integer.parseInt(customerId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.order.Id,\n" +
+            "    moviedb.order.DateTime,\n" +
+            "    moviedb.order.ReturnDate\n" +
+            "FROM\n" +
+            "    moviedb.rental,\n" +
+            "    moviedb.order\n" +
+            "WHERE\n" +
+            "    moviedb.rental.AccountId = ?\n" +
+            "        AND moviedb.rental.OrderId = moviedb.order.Id;");
+            stmt.setInt(1, custId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryCurrentlyHeldMovies(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movie,\n" +
+            "    moviedb.rental\n" +
+            "WHERE\n" +
+            "    moviedb.rental.AccountId = ?\n" +
+            "        AND moviedb.rental.MovieId = moviedb.movie.Id\n" +
+            "        AND moviedb.rental.OrderId IN (SELECT \n" +
+            "            moviedb.order.Id\n" +
+            "        FROM\n" +
+            "            moviedb.order\n" +
+            "        WHERE\n" +
+            "            moviedb.order.ReturnDate IS NULL);");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryMovieQueue(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movieq,\n" +
+            "    moviedb.movie\n" +
+            "WHERE\n" +
+            "    moviedb.movieq.MovieId = moviedb.movie.Id\n" +
+            "        AND moviedb.movieq.AccountId = ?;");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryAccountSettings(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.account.*, moviedb.person.*, moviedb.customer.*\n" +
+            "FROM\n" +
+            "    moviedb.account,\n" +
+            "    moviedb.customer,\n" +
+            "    moviedb.person\n" +
+            "WHERE\n" +
+            "    moviedb.account.Id = ? AND\n" +
+            "    moviedb.account.Customer = moviedb.customer.Id AND\n" +
+            "    moviedb.customer.Id = moviedb.person.SSN;");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryBestSellers(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movie,\n" +
+            "    moviedb.rental\n" +
+            "WHERE\n" +
+            "    moviedb.movie.Id = moviedb.rental.MovieId\n" +
+            "GROUP BY moviedb.movie.Name\n" +
+            "ORDER BY COUNT(moviedb.rental.MovieId) DESC;");
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
