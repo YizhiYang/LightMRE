@@ -907,5 +907,28 @@ public class DBConnection {
             return false;
         }
     }
+    public ResultSet queryOrderHistory(String customerId){
+        try{
+            int custId = Integer.parseInt(customerId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.order.Id,\n" +
+            "    moviedb.order.DateTime,\n" +
+            "    moviedb.order.ReturnDate\n" +
+            "FROM\n" +
+            "    moviedb.rental,\n" +
+            "    moviedb.order\n" +
+            "WHERE\n" +
+            "    moviedb.rental.AccountId = ?\n" +
+            "        AND moviedb.rental.OrderId = moviedb.order.Id;");
+            stmt.setInt(1, custId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
