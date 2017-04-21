@@ -1001,5 +1001,25 @@ public class DBConnection {
             return null;
         }
     }
+    public ResultSet queryBestSellers(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movie,\n" +
+            "    moviedb.rental\n" +
+            "WHERE\n" +
+            "    moviedb.movie.Id = moviedb.rental.MovieId\n" +
+            "GROUP BY moviedb.movie.Name\n" +
+            "ORDER BY COUNT(moviedb.rental.MovieId) DESC;");
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
