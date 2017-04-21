@@ -422,7 +422,7 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean updateMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
+    public boolean editMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies){
         try{
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("UPDATE Movie SET Name = ?, Type = ?, distrFee = ?, NumOfCopies = ? WHERE Id = ?");
@@ -799,6 +799,40 @@ public class DBConnection {
         {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
             return false;
+        }
+    }
+    /*
+     * Get a list of most actively rented movies
+     * TESTED
+    */
+    public ResultSet queryMovieMostRented(){
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT m.Id, m.Name, COUNT(r.MovieId) FROM Rental r, Movie m WHERE r.MovieId = m.id GROUP BY r.MovieId DESC;");
+           
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    /*
+     * Get a list of most active customer based on amount of movie rented
+     * TESTED
+    */
+    public ResultSet queryCustomerMostActive(){
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT r.AccountId, p.LastName, p.FirstName, COUNT(AccountId) FROM Rental r, Customer c, Person p, Account a WHERE r.AccountId = a.id AND p.SSN = c.Id AND a.Customer = c.Id GROUP BY r.AccountId DESC;");
+           
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
 }
