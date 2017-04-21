@@ -930,5 +930,32 @@ public class DBConnection {
             return null;
         }
     }
+    public ResultSet queryCurrentlyHeldMovies(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movie,\n" +
+            "    moviedb.rental\n" +
+            "WHERE\n" +
+            "    moviedb.rental.AccountId = ?\n" +
+            "        AND moviedb.rental.MovieId = moviedb.movie.Id\n" +
+            "        AND moviedb.rental.OrderId IN (SELECT \n" +
+            "            moviedb.order.Id\n" +
+            "        FROM\n" +
+            "            moviedb.order\n" +
+            "        WHERE\n" +
+            "            moviedb.order.ReturnDate IS NULL);");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
