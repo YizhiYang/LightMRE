@@ -957,5 +957,49 @@ public class DBConnection {
             return null;
         }
     }
+    public ResultSet queryMovieQueue(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.movie.Name\n" +
+            "FROM\n" +
+            "    moviedb.movieq,\n" +
+            "    moviedb.movie\n" +
+            "WHERE\n" +
+            "    moviedb.movieq.MovieId = moviedb.movie.Id\n" +
+            "        AND moviedb.movieq.AccountId = ?;");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryAccountSettings(String accountId){
+        try{
+            int accId = Integer.parseInt(accountId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT \n" +
+            "    moviedb.account.*, moviedb.person.*, moviedb.customer.*\n" +
+            "FROM\n" +
+            "    moviedb.account,\n" +
+            "    moviedb.customer,\n" +
+            "    moviedb.person\n" +
+            "WHERE\n" +
+            "    moviedb.account.Id = ? AND\n" +
+            "    moviedb.account.Customer = moviedb.customer.Id AND\n" +
+            "    moviedb.customer.Id = moviedb.person.SSN;");
+            stmt.setInt(1, accId);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
