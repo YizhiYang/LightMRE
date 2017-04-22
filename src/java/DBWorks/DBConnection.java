@@ -1021,5 +1021,83 @@ public class DBConnection {
             return null;
         }
     }
+    /*
+     * Get the Customer Representative with the most oversaw transaction;
+     * TESTED
+    */
+     public ResultSet queryCustRepOversawTrans(){
+         try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT r.CustRepId, p.LastName, p.FirstName,COUNT(r.MovieId) FROM moviedb.Rental r, moviedb.Employee e, moviedb.Person p WHERE e.Id = r.CustRepId And p.SSN = e.SSN GROUP BY r.CustRepId ORDER BY COUNT(r.MovieId) DESC;");
+           
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+     /*
+      * Get a list of movie rental given the movie name
+      * The output for now is the movie name, the person Lastname and firstname
+      * TESTED
+     */
+    public ResultSet queryMovieRentalbyName(String name){
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND m.Name = ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
+            stmt.setString(1, name);
+           
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    /*
+     * Get the monthly Sales Report
+     * TESTED 
+    */
+    public ResultSet queryMonthlySalesReport(String month, String year){
+        try {
+            String Startdates = year + "-" + month + "-" + "01";
+            String EndDates = year + "-" + month + "-";
+            switch(Integer.parseInt(month)){
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    EndDates += "31";
+                    break;
+                case 2:
+                    EndDates += "28";
+                    break;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    EndDates += "30";
+                    break;
+            }
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT SUM(DistrFee) FROM `Order` o, Movie m, Rental r WHERE o.DateTime BETWEEN DATE(?) AND DATE(?) AND r.OrderId = o.Id AND m.Id = r.MovieId;");
+            stmt.setString(1, Startdates);
+            stmt.setString(2, EndDates);
+            
+            
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
 
