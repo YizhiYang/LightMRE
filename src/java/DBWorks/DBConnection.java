@@ -835,10 +835,41 @@ public class DBConnection {
             return null;
         }
     }
-    public ResultSet queryRatableMovies(String accountId, String customerId){
+    public int getAccId(String username){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Id from Account WHERE username = ?");
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt("Id");
+            }
+            return -1;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    public String getCustId(String username){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Customer.Id FROM Account, Customer WHERE "
+                    + "Account.Customer = Customer.Id AND Account.username = ?");
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getString("Id");
+            }
+            return null;
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryRatableMovies(String username){
         try {
-            int accId = Integer.parseInt(accountId);
-            int custId = Integer.parseInt(customerId);
+            int accId = getAccId(username);
+            String custId = getCustId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
             "    moviedb.movie.Id, moviedb.movie.Name\n" +
@@ -861,7 +892,7 @@ public class DBConnection {
             "        WHERE\n" +
             "            moviedb.rating.CustomerId = ?);");
             stmt.setInt(1, accId);
-            stmt.setInt(2, custId);
+            stmt.setString(2, custId);
             ResultSet rs = stmt.executeQuery();
             return rs;
         }catch(SQLException ex){
@@ -869,10 +900,10 @@ public class DBConnection {
             return null;
         }
     }
-    public boolean addRating(String MovieId, String CustomerId, String rating){
+    public boolean addRating(String MovieId, String username, String rating){
         try{
             int movId = Integer.parseInt(MovieId);
-            int custId = Integer.parseInt(CustomerId);
+            int custId = getAccId(username);
             int rat = Integer.parseInt(rating);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT INTO Rating(MovieId, CustomerId, Rating) VALUES (?, ?, ?)");
@@ -907,9 +938,9 @@ public class DBConnection {
             return false;
         }
     }
-    public ResultSet queryOrderHistory(String customerId){
+    public ResultSet queryOrderHistory(String username){
         try{
-            int custId = Integer.parseInt(customerId);
+            int custId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
             "    moviedb.order.Id,\n" +
@@ -930,12 +961,12 @@ public class DBConnection {
             return null;
         }
     }
-    public ResultSet queryCurrentlyHeldMovies(String accountId){
+    public ResultSet queryCurrentlyHeldMovies(String username){
         try{
-            int accId = Integer.parseInt(accountId);
+            int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
-            "    moviedb.movie.Name\n" +
+            "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating\n" +
             "FROM\n" +
             "    moviedb.movie,\n" +
             "    moviedb.rental\n" +
@@ -957,9 +988,9 @@ public class DBConnection {
             return null;
         }
     }
-    public ResultSet queryMovieQueue(String accountId){
+    public ResultSet queryMovieQueue(String username){
         try{
-            int accId = Integer.parseInt(accountId);
+            int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
             "    moviedb.movie.Name\n" +
@@ -978,9 +1009,9 @@ public class DBConnection {
             return null;
         }
     }
-    public ResultSet queryAccountSettings(String accountId){
+    public ResultSet queryAccountSettings(String username){
         try{
-            int accId = Integer.parseInt(accountId);
+            int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
             "    moviedb.account.*, moviedb.person.*, moviedb.customer.*\n" +
@@ -1097,6 +1128,49 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        }
+    }
+    public boolean doesCustomerHave(String username, String movieId){
+        try{
+            int accId = getAccId(username);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT rental.MovieId FROM rental, moviedb.order WHERE"
+                +" Order.ReturnDate IS NULL AND rental.OrderId = Order.Id"
+                +" AND rental.AccountId = ? AND rental.MovieId = ?");
+            stmt.setInt(1, accId);
+            stmt.setString(2, movieId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public boolean addRental(String orderId, String username, String custRepId, String movieId){
+        try{
+            int ordId = Integer.parseInt(orderId);
+            int accId = getAccId(username);
+            int cusRepId = Integer.parseInt(custRepId);
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("INSERT INTO moviedb.order(Id, DateTime, ReturnDate) VALUES (?, NOW(), NULL)");
+            stmt.setInt(1, ordId);
+            
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("INSERT INTO moviedb.rental(AccountId, CustRepId, OrderId, MovieId) VALUES (?, ?, ?, ?)");
+            stmt.setInt(1, accId);
+            stmt.setInt(2, cusRepId);
+            stmt.setInt(3, ordId);
+            stmt.setString(4, movieId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 }
