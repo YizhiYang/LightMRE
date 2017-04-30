@@ -1130,9 +1130,10 @@ public class DBConnection {
             return null;
         }
     }
-    public boolean doesCustomerHave(String username, String movieId){
+    public boolean doesCustomerHave(String username, String movieName){
         try{
             int accId = getAccId(username);
+            String movieId = getMovieId(movieName);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT rental.MovieId FROM rental, moviedb.order WHERE"
                 +" Order.ReturnDate IS NULL AND rental.OrderId = Order.Id"
