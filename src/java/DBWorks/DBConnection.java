@@ -1151,15 +1151,14 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addRental(String orderId, String username, String custRepId, String movieId){
+    public boolean addRental(String username, String movieId){
         try{
-            int ordId = Integer.parseInt(orderId);
+            int ordId = getNumberOfOrders()+1;
             int accId = getAccId(username);
-            int cusRepId = Integer.parseInt(custRepId);
+            int cusRepId = getNumberOfEmployees();
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT INTO moviedb.order(Id, DateTime, ReturnDate) VALUES (?, NOW(), NULL)");
             stmt.setInt(1, ordId);
-            
             stmt.executeUpdate();
             stmt = conn.prepareStatement("INSERT INTO moviedb.rental(AccountId, CustRepId, OrderId, MovieId) VALUES (?, ?, ?, ?)");
             stmt.setInt(1, accId);
@@ -1171,6 +1170,34 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        }
+    }
+    public int getNumberOfEmployees(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.employee");
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return (int)(Math.random()*rs.getInt("COUNT(*)")+1);
+            }
+            return -1;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    public int getNumberOfOrders(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.order");
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt("COUNT(*)");
+            }
+            return -1;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
         }
     }
 }
