@@ -1151,10 +1151,11 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addRental(String username, String movieId){
+    public boolean addRental(String username, String movieName){
         try{
             int ordId = getNumberOfOrders()+1;
             int accId = getAccId(username);
+            String movieId = getMovieId(movieName);
             int cusRepId = getNumberOfEmployees();
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT INTO moviedb.order(Id, DateTime, ReturnDate) VALUES (?, NOW(), NULL)");
@@ -1170,6 +1171,21 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
+        }
+    }
+    public String getMovieId(String movieName){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Movie.Id FROM Movie WHERE Movie.Name = ?");
+            stmt.setString(1, movieName);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getString("Movie.Id");
+            }
+            return null;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
     public int getNumberOfEmployees(){
