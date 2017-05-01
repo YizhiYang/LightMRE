@@ -820,6 +820,14 @@ public class DBConnection {
 
     /*
      * Get a list of most actively rented movies
+        ResultSet rs = t.queryMovieMostRented();
+//        try{
+//            while(rs.next()){
+//                System.out.println(rs.getString(1) + " " + rs.getString(2) +  " " + rs.getString(3));
+//            }
+//        }catch(SQLException ex){
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+//        }
      * TESTED
      */
     public ResultSet queryMovieMostRented() {
@@ -838,6 +846,14 @@ public class DBConnection {
 
     /*
      * Get a list of most active customer based on amount of movie rented
+     ResultSet rs = t.queryCustomerMostActive();
+//        try{
+//            while(rs.next()){
+//                System.out.println(rs.getString(1) + " " + rs.getString(2) +  " " + rs.getString(3) + " " + rs.getString(4) + " ");
+//            }
+//        }catch(SQLException ex){
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+//        }
      * TESTED
      */
     public ResultSet queryCustomerMostActive() {
@@ -1083,6 +1099,14 @@ public class DBConnection {
 
     /*
      * Get the Customer Representative with the most oversaw transaction;
+     ResultSet rs = t.queryCustRepOversawTrans();
+//        try{
+//            while(rs.next()){
+//                System.out.println(rs.getString(1) + " " + rs.getString(2) +  " " + rs.getString(3) + " " + rs.getString(4) + " ");
+//            }
+//        }catch(SQLException ex){
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+//        }
      * TESTED
      */
     public ResultSet queryCustRepOversawTrans() {
@@ -1102,6 +1126,15 @@ public class DBConnection {
     /*
       * Get a list of movie rental given the movie name
       * The output for now is the movie name, the person Lastname and firstname
+    
+    ResultSet rs = t.queryMovieRentalbyName("Borat");
+//        try{
+//            while(rs.next()){
+//                System.out.println(rs.getString(1) + " " + rs.getString(2) +  " " + rs.getString(3) + " " );
+//            }
+//        }catch(SQLException ex){
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+//        }
       * TESTED
      */
     public ResultSet queryMovieRentalbyName(String name) {
@@ -1121,13 +1154,22 @@ public class DBConnection {
 
     /*
      * Get the monthly Sales Report
+     * example: 
+        ResultSet rs = t.queryMonthlySalesReport(" 11 "," 2009 ");
+        try{
+            while(rs.next()){
+                System.out.println(rs.getString(1));
+            }
+        }catch(SQLException ex){
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null ,ex);
+        }
      * TESTED 
      */
-    public ResultSet queryMonthlySalesReport(String month, String year) {
+    public ResultSet queryMonthlySalesReport(String month, String year){
         try {
-            String Startdates = year + "-" + month + "-" + "01";
-            String EndDates = year + "-" + month + "-";
-            switch (Integer.parseInt(month)) {
+            String Startdates = year.replaceAll("\\s+","") + "-" + month.replaceAll("\\s+","") + "-" + "01";
+            String EndDates = year.replaceAll("\\s+","") + "-" + month.replaceAll("\\s+","") + "-";
+            switch(Integer.parseInt(month.replaceAll("\\s+",""))){
                 case 1:
                 case 3:
                 case 5:
@@ -1138,7 +1180,18 @@ public class DBConnection {
                     EndDates += "31";
                     break;
                 case 2:
-                    EndDates += "28";
+                    boolean g = true;
+                    if(Integer.parseInt(year) % 4 == 0){
+                        if(Integer.parseInt(year) % 100 == 0){
+                            if(Integer.parseInt(year) % 400 == 0){
+                                EndDates += "29";
+                                g = false;
+                            }
+                        }
+                    }
+                    if(g){
+                        EndDates += "28";
+                    }
                     break;
                 case 4:
                 case 6:
@@ -1151,7 +1204,7 @@ public class DBConnection {
             stmt = conn.prepareStatement("SELECT SUM(DistrFee) FROM `Order` o, Movie m, Rental r WHERE o.DateTime BETWEEN DATE(?) AND DATE(?) AND r.OrderId = o.Id AND m.Id = r.MovieId;");
             stmt.setString(1, Startdates);
             stmt.setString(2, EndDates);
-
+            
             
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -1160,5 +1213,5 @@ public class DBConnection {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-    } 
+    }
 }
