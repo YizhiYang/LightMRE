@@ -4,14 +4,10 @@
  * and open the template in the editor.
  */
 
-import Beans.Customer;
-import Beans.Employee;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -24,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author MATT
  */
-public class QueryAllCustomers extends HttpServlet {
+public class AddCustomer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +39,10 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueryAllCustomers</title>");
+            out.println("<title>Servlet AddCustomer</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddCustomer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,38 +60,7 @@ public class QueryAllCustomers extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -109,39 +74,41 @@ public class QueryAllCustomers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //processRequest(request, response);
         try {
             DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
+            DBConnect.connectDB();
+            
+            String lastName = (String)request.getParameter("lastName");
+            String firstName = (String)request.getParameter("firstName");
+            String SSN = (String)request.getParameter("SSN");
+            String phoneNumber = (String)request.getParameter("phoneNumber");
+            String address = (String)request.getParameter("address");
+            String city = (String)request.getParameter("city");
+            String state = (String)request.getParameter("state");
+            String zip = (String)request.getParameter("zip");
+            String date = (String)request.getParameter("date");
+            String email = (String)request.getParameter("email");
+            String userName = (String)request.getParameter("userName");
+            String userPassword = (String)request.getParameter("userPassword");
+            String creditCardNumber = (String)request.getParameter("creditCardNumber");
+            String accountType = (String)request.getParameter("accountType");
+            
+             
+            
+            DBConnect.addCustomer(zip, city, state, SSN, lastName, firstName, address, phoneNumber, email, creditCardNumber, date, accountType, userName, userPassword);
+                
+                RequestDispatcher dispatcher
+                        = request.getRequestDispatcher("QueryAllCustomers");
+                dispatcher.forward(request, response);
+            
+            if(zip == null)
                 processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**

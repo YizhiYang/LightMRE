@@ -20,17 +20,15 @@
     </head>
     <body>
 
-        <form name="submitForm" method="POST" action="http://localhost:8080/LightMRE/ListOfEmployees">
             <div class = "topnav">
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
-                <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="javascript:document.submitForm.submit()">Employees</a>
-                <a class = "HomeButton" onClick="forwardToCustomerPageServlet()" style="text-decoration:none">Customers</a>
+                <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
+                <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">More</a>
                 <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
             </div>
 
-        </form>
         <section>
             <!--for demo wrap-->
             <h1 id = "youMayLike">All Movies</h1>
@@ -43,7 +41,7 @@
                             <th>Actor</th>
                             <th>Rating</th>
                             <th>Price</th>
-                            <th></th>
+                            <th><button onclick="location.href = 'AddMovie.jsp'">Add Movie</button></th>
                             <th></th>
                         </tr>
                     </thead>
