@@ -4,7 +4,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import Beans.Recommendation;
 import DBWorks.DBConnection;
 import java.io.IOException;
@@ -26,8 +25,11 @@ import javax.servlet.http.HttpSession;
  *
  * @author MATT
  */
-public class HomePageServ extends HttpServlet {
 
+
+public class HomePageServ extends HttpServlet {
+    
+    int once = 0;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -116,11 +118,17 @@ public class HomePageServ extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            
+            
             // Store name and password into Session Object
             HttpSession session = request.getSession();
+
+          
             session.setAttribute("UserName", request.getParameter("name"));
             session.setAttribute("Password", request.getParameter("password"));
+
             DBConnection DBConnect = new DBConnection();
+
             boolean result = false;
             try {
                 result = DBConnect.valid(request);
@@ -129,27 +137,31 @@ public class HomePageServ extends HttpServlet {
             }
             String username = request.getParameter("name");
             String password = request.getParameter("password");
+            
+
+            session.setAttribute("userName", request.getParameter("name"));
+            session.setAttribute("password", request.getParameter("password"));
+
+            
+//            String username = (String) session.getAttribute("userName");
+//            String password = (String) session.getAttribute("password");
+            
             Boolean isCustomer = DBConnect.existingCustomer(username, password);
             char accountType = ' ';
 
-            if(isCustomer){
+            if (isCustomer) {
                 accountType = 'c';
-            }
-            else{
+            } else {
                 int type = DBConnect.existingEmployee(username, password);
-                if(type == 1){
+                if (type == 1) {
                     accountType = 'e';
-                }
-                else if(type == 2){
+                } else if (type == 2) {
                     accountType = 'm';
                 }
-                
+
             }
 
-
             // Connect to the DB
-            
-
             session.setAttribute("r", request);
 
             ResultSet rs = null;
@@ -202,21 +214,26 @@ public class HomePageServ extends HttpServlet {
                 DBConnect.close();
 
                 if (result) {
+                    
                     RequestDispatcher dispatcher
                             = request.getRequestDispatcher(url);
                     dispatcher.forward(request, response);
                 } // if not, then forward back to the login page.
                 else {
+                    processRequest(request, response);
                     RequestDispatcher dispatcher
                             = request.getRequestDispatcher(falseUrl);
                     dispatcher.forward(request, response);
                 }
-            } else {
-                String falseUrl = "index.html";
-                String url = "ManagerHomePage.jsp";
+            } else if (accountType == 'e') {
+                String EmployeeUrl = "EmployeeHomePage.jsp";
+            
+                
+                
                 RequestDispatcher dispatcher
-                        = request.getRequestDispatcher(falseUrl);
+                        = request.getRequestDispatcher(EmployeeUrl);
                 dispatcher.forward(request, response);
+                //processRequest(request, response);
             }
 
         } catch (SQLException ex) {
@@ -235,4 +252,3 @@ public class HomePageServ extends HttpServlet {
     }// </editor-fold>
 
 }
-

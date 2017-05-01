@@ -30,17 +30,14 @@
 
         <section>
             <!--for demo wrap-->
-            <h1 id = "youMayLike">All Customer</h1>
+            <h1 id = "youMayLike">Rental History</h1>
             <div class="tbl-header">
                 <table cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Email</th>
-                            <th>Rating</th>
-                            <th>Credit Card Number</th>
-                            <th></th>
-                             <th><button onclick="location.href = 'AddCustomer.jsp'">Add Customer</button></th>
+                            <th>Date Time</th>
+                            <th>Return Date</th>
                         </tr>
                     </thead>
                 </table>
@@ -48,14 +45,11 @@
             <div class="tbl-content">
                 <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
-                        <c:forEach items="${customersList}" var="dList">
+                        <c:forEach items="${historyList}" var="dList">
                             <tr>
                                 <td contenteditable='true'>${dList.id}</td>
-                                <td contenteditable='true'>${dList.email}</td>
-                                <td contenteditable='true'>${dList.rating}</td>
-                                <td contenteditable='true'>${dList.creditCardNumber}</td>
-                                <td><button type="button" onclick="getId(this)">Edit</button></td>
-                                <td><button type="button" onclick="deleteEmployee(this)">Delete</button></td>
+                                <td contenteditable='true'>${dList.dataTime}</td>
+                                <td contenteditable='true'>${dList.returnDate}</td>
                             </tr>
                         </c:forEach>
 

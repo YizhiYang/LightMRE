@@ -171,49 +171,35 @@
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Employees</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
+       
 
         <div class="container">  
-            <form id="contact" action="http://localhost:8080/LightMRE/AddEmployee" method="post">
-                <h3>Add Employee</h3>
-                <h4>Employee details</h4>
+            <form id="contact" action="http://localhost:8080/LightMRE/AddMovie" method="post">
+                <h3>Add Movie</h3>
+                <h4>Movie details</h4>
                 <fieldset>
-                    <input name="lastName" placeholder="Last Name" type="text" tabindex="1" required autofocus>
+                    <input name="movieName" placeholder="Movie Name" type="text" tabindex="1" required autofocus>
                 </fieldset>
                 <fieldset>
-                    <input name="firstName" placeholder="First Name" type="text" tabindex="2" required>
+                    <input name="type" placeholder="Type" type="text" tabindex="2" required>
                 </fieldset>
                 <fieldset>
-                    <input name="phoneNumber" placeholder="Phone Number" type="text" tabindex="3" required>
+                    <input name="rating" placeholder="Rating" type="text" tabindex="3" required>
                 </fieldset>
                 <fieldset>
-                    <input name="SSN" placeholder="SSN" type="text" tabindex="4" required>
+                    <input name="distrFee" placeholder="Distribution Fee" type="text" tabindex="4" required>
                 </fieldset>
                 <fieldset>
-                    <input name="address" placeholder="Address" type="text" tabindex="5" required>
+                    <input name="copies" placeholder="Number of Copies" type="text" tabindex="5" required>
                 </fieldset>
                 <fieldset>
-                    <input name="city" placeholder="City" type="text" tabindex="6" required>
+                    <input name="actors" placeholder="Actor Names" type="text" tabindex="6" required>
                 </fieldset>
                 <fieldset>
-                    <input name="state" placeholder="State" type="text" tabindex="7" required>
+                    <input name="ages" placeholder="Actor Ages" type="text" tabindex="7" required>
                 </fieldset>
                 <fieldset>
-                    <input name="zip" placeholder="Zip Code" type="text" tabindex="8" required>
-                </fieldset>
-                <fieldset>
-                    <input name="date" placeholder="Start Date" type="text" tabindex="9" required>
-                </fieldset>
-                <fieldset>
-                    <input name="rate" placeholder="Hourly Rate" type="text" tabindex="11" required>
-                </fieldset>
-                <fieldset>
-                    <input name="userName" placeholder="User Name" type="text" tabindex="12" required>
-                </fieldset>
-                <fieldset>
-                    <input name="userPassword" placeholder="User Password" type="text" tabindex="13" required>
-                </fieldset>
-                <fieldset>
-                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="14" required>
+                    <input name="genders" placeholder="Actor Genders" type="text" tabindex="8" required>
                 </fieldset>
                 <fieldset>
                     <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>

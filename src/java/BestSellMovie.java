@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-import Beans.Customer;
 import Beans.Employee;
+import Beans.Movie;
+import Beans.Recommendation;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author MATT
  */
-public class QueryAllCustomers extends HttpServlet {
+public class BestSellMovie extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +44,10 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueryAllCustomers</title>");
+            out.println("<title>Servlet BestSellMovie</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet BestSellMovie at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,36 +67,33 @@ public class QueryAllCustomers extends HttpServlet {
             throws ServletException, IOException {
         try {
             DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
+            DBConnect.connectDB();
 
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
+            ResultSet rs;
+            //rs = DBConnect.queryBestSellers();
+            rs = DBConnect.queryUserSuggestedMovies(1);
+            ArrayList list = new ArrayList();
             while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
+                Recommendation movie = new Recommendation();
+                movie.setName(rs.getString("Name"));
+                movie.setType(rs.getString("Type"));
+                movie.setRating(rs.getInt("Rating"));
+                movie.setPrice(rs.getDouble("DistrFee"));
+                list.add(movie);
             }
-            request.setAttribute("customersList", resultList);
-
+            request.setAttribute("BestSellList", list);
             DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            RequestDispatcher dispatcher
+                    = request.getRequestDispatcher("BestSellerMovie.jsp");
+            dispatcher.forward(request, response);
+
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
         }
+    
     }
 
     /**
@@ -111,37 +109,30 @@ public class QueryAllCustomers extends HttpServlet {
             throws ServletException, IOException {
         try {
             DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
+            DBConnect.connectDB();
 
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
+            ResultSet rs = DBConnect.queryBestSellers();
+            ArrayList list = new ArrayList();
             while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
+                Recommendation movie = new Recommendation();
+                movie.setName(rs.getString("Name"));
+                movie.setType(rs.getString("Type"));
+                movie.setRating(rs.getInt("Rating"));
+                movie.setPrice(rs.getDouble("DistrFee"));
+                list.add(movie);
             }
-            request.setAttribute("customersList", resultList);
-
+            request.setAttribute("BestSellList", list);
             DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
+
             RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
+                    = request.getRequestDispatcher("BestSellerMovie.jsp");
             dispatcher.forward(request, response);
-            //processRequest(request, response);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**

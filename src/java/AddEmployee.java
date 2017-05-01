@@ -112,8 +112,8 @@ public class AddEmployee extends HttpServlet {
                         = request.getRequestDispatcher("ListOfEmployees");
                 dispatcher.forward(request, response);
             
-            if(zip == null)
-                processRequest(request, response);
+            //if(zip == null)
+                //processRequest(request, response);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddEmployee.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {

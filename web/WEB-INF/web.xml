@@ -20,9 +20,29 @@
         <servlet-name>QueryAllCustomers</servlet-name>
         <servlet-class>QueryAllCustomers</servlet-class>
     </servlet>
-        <servlet>
+    <servlet>
         <servlet-name>AddEmployee</servlet-name>
         <servlet-class>AddEmployee</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddCustomer</servlet-name>
+        <servlet-class>AddCustomer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CustomerHoldMovies</servlet-name>
+        <servlet-class>CustomerHoldMovies</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddMovie</servlet-name>
+        <servlet-class>AddMovie</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RentalHistory</servlet-name>
+        <servlet-class>RentalHistory</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BestSellMovie</servlet-name>
+        <servlet-class>BestSellMovie</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
@@ -44,12 +64,30 @@
         <servlet-name>QueryAllCustomers</servlet-name>
         <url-pattern>/QueryAllCustomers</url-pattern>
     </servlet-mapping>
-    
-        <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AddEmployee</servlet-name>
         <url-pattern>/AddEmployee</url-pattern>
     </servlet-mapping>
-    
+    <servlet-mapping>
+        <servlet-name>AddCustomer</servlet-name>
+        <url-pattern>/AddCustomer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerHoldMovies</servlet-name>
+        <url-pattern>/CustomerHoldMovies</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddMovie</servlet-name>
+        <url-pattern>/AddMovie</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RentalHistory</servlet-name>
+        <url-pattern>/RentalHistory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BestSellMovie</servlet-name>
+        <url-pattern>/BestSellMovie</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

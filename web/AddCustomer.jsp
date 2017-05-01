@@ -160,8 +160,6 @@
 
     </style>
 
-
-
     <body>
 
 
@@ -173,9 +171,9 @@
         </div>
 
         <div class="container">  
-            <form id="contact" action="http://localhost:8080/LightMRE/AddEmployee" method="post">
-                <h3>Add Employee</h3>
-                <h4>Employee details</h4>
+            <form id="contact" action="http://localhost:8080/LightMRE/AddCustomer" method="post">
+                <h3>Add Customer</h3>
+                <h4>Customer details</h4>
                 <fieldset>
                     <input name="lastName" placeholder="Last Name" type="text" tabindex="1" required autofocus>
                 </fieldset>
@@ -201,10 +199,13 @@
                     <input name="zip" placeholder="Zip Code" type="text" tabindex="8" required>
                 </fieldset>
                 <fieldset>
-                    <input name="date" placeholder="Start Date" type="text" tabindex="9" required>
+                    <input name="date" placeholder="Open Date" type="text" tabindex="9" required>
                 </fieldset>
                 <fieldset>
-                    <input name="rate" placeholder="Hourly Rate" type="text" tabindex="11" required>
+                    <input name="email" placeholder="Email" type="text" tabindex="10" required>
+                </fieldset>
+                <fieldset>
+                    <input name="accountType" placeholder="Account type" type="text" tabindex="11" required>
                 </fieldset>
                 <fieldset>
                     <input name="userName" placeholder="User Name" type="text" tabindex="12" required>
@@ -213,7 +214,7 @@
                     <input name="userPassword" placeholder="User Password" type="text" tabindex="13" required>
                 </fieldset>
                 <fieldset>
-                    <input name="type" placeholder="Manager or Employee" type="text" tabindex="14" required>
+                    <input name="creditCardNumber" placeholder="Credit card Number" type="text" tabindex="14" required>
                 </fieldset>
                 <fieldset>
                     <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
@@ -230,6 +231,4 @@
 
     </body>
 
-
-   
 </html>
