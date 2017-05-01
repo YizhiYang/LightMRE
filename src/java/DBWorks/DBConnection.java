@@ -943,15 +943,17 @@ public class DBConnection {
             int custId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
-            "    moviedb.order.Id,\n" +
-            "    moviedb.order.DateTime,\n" +
-            "    moviedb.order.ReturnDate\n" +
-            "FROM\n" +
-            "    moviedb.rental,\n" +
-            "    moviedb.order\n" +
-            "WHERE\n" +
-            "    moviedb.rental.AccountId = ?\n" +
-            "        AND moviedb.rental.OrderId = moviedb.order.Id;");
+                "    moviedb.movie.Name,\n" +
+                "    moviedb.order.DateTime,\n" +
+                "    moviedb.order.ReturnDate\n" +
+                "FROM\n" +
+                "    moviedb.rental,\n" +
+                "    moviedb.order,\n" +
+                "    moviedb.movie\n" +
+                "WHERE\n" +
+                "    moviedb.rental.AccountId = ?\n" +
+                "        AND moviedb.rental.OrderId = moviedb.order.Id\n" +
+                "        AND rental.MovieId = movie.Id;");
             stmt.setInt(1, custId);
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -1036,7 +1038,7 @@ public class DBConnection {
         try{
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n" +
-            "    moviedb.movie.Name\n" +
+            "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.movie.DistrFee\n" +
             "FROM\n" +
             "    moviedb.movie,\n" +
             "    moviedb.rental\n" +
