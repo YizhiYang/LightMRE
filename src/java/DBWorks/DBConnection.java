@@ -336,7 +336,7 @@ public class DBConnection {
                     }
                     ActorId = ActorId + 1;
                     
-                    int age = Integer.parseInt(ActorAge[i]);
+                    int age = Integer.parseInt(ActorAge[i].replaceAll("\\s",""));
                     
                     stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, `M/F`) VALUES (?,?,?,?)");
                     stmt.setInt(1,ActorId);
