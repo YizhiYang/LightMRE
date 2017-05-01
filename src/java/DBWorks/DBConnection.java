@@ -983,15 +983,16 @@ public class DBConnection {
             int custId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n"
-                    + "    moviedb.order.Id,\n"
+                    + "    moviedb.order.Id, moviedb.movie.Name,\n"
                     + "    moviedb.order.DateTime,\n"
                     + "    moviedb.order.ReturnDate\n"
                     + "FROM\n"
                     + "    moviedb.rental,\n"
-                    + "    moviedb.order\n"
+                    + "    moviedb.order, moviedb.movie\n"
                     + "WHERE\n"
                     + "    moviedb.rental.AccountId = ?\n"
-                    + "        AND moviedb.rental.OrderId = moviedb.order.Id;");
+                    + "        AND moviedb.rental.OrderId = moviedb.order.Id"
+                    + " AND moviedb.movie.Id = moviedb.rental.MovieId;");
             stmt.setInt(1, custId);
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -1057,7 +1058,7 @@ public class DBConnection {
             int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n"
-                    + "    moviedb.account.*, moviedb.person.*, moviedb.customer.*\n"
+                    + "    moviedb.account.Id, moviedb.account.Type, moviedb.account.username, moviedb.account.password, moviedb.customer.CreditCardNumber, moviedb.customer.Email\n"
                     + "FROM\n"
                     + "    moviedb.account,\n"
                     + "    moviedb.customer,\n"
@@ -1251,6 +1252,26 @@ public class DBConnection {
             stmt.setInt(2, cusRepId);
             stmt.setInt(3, ordId);
             stmt.setString(4, movieId);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("UPDATE movie SET NumCopies = NumCopies - 1 WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public boolean addReturnRental(String movieName, String orderId){
+        try{
+            PreparedStatement stmt = null;
+            String movieId = getMovieId(movieName);
+            int ordId = Integer.parseInt(orderId);
+            stmt = conn.prepareStatement("UPDATE moviedb.order SET ReturnDate = CURDATE() WHERE moviedb.order.Id = ?;");
+            stmt.setInt(1, ordId);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("UPDATE movie SET NumCopies = NumCopies + 1 WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
             stmt.executeUpdate();
             return true;
         } catch (SQLException ex) {
