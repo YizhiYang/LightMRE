@@ -136,8 +136,9 @@ public class DBConnection {
 
     }
 
-    public ResultSet queryUserSuggestedMovies(int accId) throws SQLException {
+    public ResultSet queryUserSuggestedMovies(String username) throws SQLException {
         try {
+            int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT DISTINCT "
                     + "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.movie.DistrFee "
