@@ -1237,12 +1237,15 @@ public class DBConnection {
             return false;
         }
     }
-    public boolean addRental(String username, String movieName){
+    public int addRental(String username, String movieName){
         try{
             int ordId = getNumberOfOrders()+1;
             int accId = getAccId(username);
             String movieId = getMovieId(movieName);
             int cusRepId = getNumberOfEmployees();
+            if(!checkIfAvailable(movieId)){
+                return 2;
+            }
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("INSERT INTO moviedb.order(Id, DateTime, ReturnDate) VALUES (?, NOW(), NULL)");
             stmt.setInt(1, ordId);
@@ -1256,10 +1259,10 @@ public class DBConnection {
             stmt = conn.prepareStatement("UPDATE movie SET NumCopies = NumCopies - 1 WHERE movie.Id = ?;");
             stmt.setString(1, movieId);
             stmt.executeUpdate();
-            return true;
+            return 1;
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return 3;
         }
     }
     public boolean addReturnRental(String movieName, String orderId){
@@ -1320,6 +1323,26 @@ public class DBConnection {
         }catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
+        }
+    }
+    public boolean checkIfAvailable(String movieId){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT movie.NumCopies FROM movie WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
+            ResultSet rs = stmt.executeQuery();
+            int numCopies = -1;
+            if(rs.next()){
+                numCopies = rs.getInt("NumCopies");
+            }
+            if(numCopies > 0){
+                return true;
+            }
+            return false;
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 }
