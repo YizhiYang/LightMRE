@@ -12,10 +12,13 @@
     </head>
     <body>
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Account</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Account</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/CustomerHoldMovies">My movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/RentalHistory">History</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
         </br>
         </br>
@@ -31,10 +34,6 @@
                 <option value="actor">Actor</option>
             </select>
         </form>
-
-
-
-
 
         <div class="detailSearch">
             <ul class="searchMenu">

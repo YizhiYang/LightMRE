@@ -44,6 +44,30 @@
         <servlet-name>BestSellMovie</servlet-name>
         <servlet-class>BestSellMovie</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MailingList</servlet-name>
+        <servlet-class>MailingList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TopEmployee</servlet-name>
+        <servlet-class>TopEmployee</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MostRentedMovies</servlet-name>
+        <servlet-class>MostRentedMovies</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MostActivelyRentedMovies</servlet-name>
+        <servlet-class>MostActivelyRentedMovies</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MostActiveCustomers</servlet-name>
+        <servlet-class>MostActiveCustomers</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RentIt</servlet-name>
+        <servlet-class>RentIt</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
         <url-pattern>/HomePageServ</url-pattern>
@@ -87,6 +111,30 @@
     <servlet-mapping>
         <servlet-name>BestSellMovie</servlet-name>
         <url-pattern>/BestSellMovie</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MailingList</servlet-name>
+        <url-pattern>/MailingList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TopEmployee</servlet-name>
+        <url-pattern>/TopEmployee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MostRentedMovies</servlet-name>
+        <url-pattern>/MostRentedMovies</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MostActivelyRentedMovies</servlet-name>
+        <url-pattern>/MostActivelyRentedMovies</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MostActiveCustomers</servlet-name>
+        <url-pattern>/MostActiveCustomers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RentIt</servlet-name>
+        <url-pattern>/RentIt</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

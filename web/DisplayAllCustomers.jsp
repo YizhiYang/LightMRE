@@ -21,9 +21,11 @@
     <body>
 
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
-            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Employees</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
+            <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="SalesReport.jsp">Sales Report</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
 
@@ -39,8 +41,9 @@
                             <th>Email</th>
                             <th>Rating</th>
                             <th>Credit Card Number</th>
-                            <th></th>
                              <th><button onclick="location.href = 'AddCustomer.jsp'">Add Customer</button></th>
+                             <th><button onclick="location.href = 'MostActiveCustomers'">Most Active Customers</button></th>
+                            
                         </tr>
                     </thead>
                 </table>

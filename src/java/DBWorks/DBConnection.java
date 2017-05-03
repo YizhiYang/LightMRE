@@ -129,15 +129,16 @@ public class DBConnection {
 
         Statement stmt = null;
         stmt = conn.createStatement();
-        String sql = "SELECT Name, Type, Rating, DistrFee FROM Movie";
+        String sql = "SELECT Name, Type, Rating, DistrFee, NumCopies FROM Movie";
         ResultSet rs = stmt.executeQuery(sql);
 
         return rs;
 
     }
 
-    public ResultSet queryUserSuggestedMovies(int accId) throws SQLException {
+    public ResultSet queryUserSuggestedMovies(String username) throws SQLException {
         try {
+            int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT DISTINCT "
                     + "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.movie.DistrFee "
@@ -823,7 +824,7 @@ public class DBConnection {
     public ResultSet queryMovieMostRented() {
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT m.Id, m.Name, COUNT(r.MovieId) FROM Rental r, Movie m WHERE r.MovieId = m.id GROUP BY r.MovieId DESC;");
+            stmt = conn.prepareStatement("SELECT m.Id, m.Name, COUNT(r.MovieId) AS count FROM Rental r, Movie m WHERE r.MovieId = m.id GROUP BY r.MovieId DESC;");
 
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -841,7 +842,7 @@ public class DBConnection {
     public ResultSet queryCustomerMostActive() {
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT r.AccountId, p.LastName, p.FirstName, COUNT(AccountId) FROM Rental r, Customer c, Person p, Account a WHERE r.AccountId = a.id AND p.SSN = c.Id AND a.Customer = c.Id GROUP BY r.AccountId DESC;");
+            stmt = conn.prepareStatement("SELECT r.AccountId, p.LastName, p.FirstName, COUNT(AccountId) As count FROM Rental r, Customer c, Person p, Account a WHERE r.AccountId = a.id AND p.SSN = c.Id AND a.Customer = c.Id GROUP BY r.AccountId DESC;");
 
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -1086,7 +1087,7 @@ public class DBConnection {
     public ResultSet queryCustRepOversawTrans() {
         try {
             PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT r.CustRepId, p.LastName, p.FirstName,COUNT(r.MovieId) FROM moviedb.Rental r, moviedb.Employee e, moviedb.Person p WHERE e.Id = r.CustRepId And p.SSN = e.SSN GROUP BY r.CustRepId ORDER BY COUNT(r.MovieId) DESC;");
+            stmt = conn.prepareStatement("SELECT r.CustRepId, p.LastName, p.FirstName,COUNT(r.MovieId) AS count FROM moviedb.Rental r, moviedb.Employee e, moviedb.Person p WHERE e.Id = r.CustRepId And p.SSN = e.SSN GROUP BY r.CustRepId ORDER BY COUNT(r.MovieId) DESC;");
 
             ResultSet rs = stmt.executeQuery();
             return rs;
@@ -1156,6 +1157,101 @@ public class DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return null;
+        }
+    }
+    
+    
+    public boolean checkIfAvailable(String movieId){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT movie.NumCopies FROM movie WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
+            ResultSet rs = stmt.executeQuery();
+            int numCopies = -1;
+            if(rs.next()){
+                numCopies = rs.getInt("NumCopies");
+            }
+            if(numCopies > 0){
+                return true;
+            }
+            return false;
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+public int addRental(String username, String movieName){
+        try{
+            int ordId = getNumberOfOrders()+1;
+            int accId = getAccId(username);
+            String movieId = getMovieId(movieName);
+            int cusRepId = getNumberOfEmployees();
+            if(!checkIfAvailable(movieId)){
+                return 2;
+            }
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("INSERT INTO moviedb.order(Id, DateTime, ReturnDate) VALUES (?, NOW(), NULL)");
+            stmt.setInt(1, ordId);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("INSERT INTO moviedb.rental(AccountId, CustRepId, OrderId, MovieId) VALUES (?, ?, ?, ?)");
+            stmt.setInt(1, accId);
+            stmt.setInt(2, cusRepId);
+            stmt.setInt(3, ordId);
+            stmt.setString(4, movieId);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("UPDATE movie SET NumCopies = NumCopies - 1 WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
+            stmt.executeUpdate();
+            return 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return 3;
+        }
+    }
+
+public String getMovieId(String movieName){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Movie.Id FROM Movie WHERE Movie.Name = ?");
+            stmt.setString(1, movieName);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getString("Movie.Id");
+            }
+            return null;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public int getNumberOfEmployees(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.employee");
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return (int)(Math.random()*rs.getInt("COUNT(*)")+1);
+            }
+            return -1;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    public int getNumberOfOrders(){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.order");
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt("COUNT(*)");
+            }
+            return -1;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
         }
     }
 }

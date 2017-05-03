@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-import Beans.Customer;
-import Beans.Employee;
+import Beans.MailingListBean;
+import Beans.Movie;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author MATT
  */
-public class QueryAllCustomers extends HttpServlet {
+public class MailingList extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +43,10 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueryAllCustomers</title>");
+            out.println("<title>Servlet MailingList</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet MailingList at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,35 +66,39 @@ public class QueryAllCustomers extends HttpServlet {
             throws ServletException, IOException {
         try {
             DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
+            DBConnect.connectDB();
+            
+            String name = (String) request.getSession().getAttribute("userName");
+            
             ResultSet rs = null;
+            String url = "MailingList.jsp";
+            ArrayList list = new ArrayList();
+            rs = DBConnect.getCustomerMailing();
 
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
             while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
+                MailingListBean mList = new MailingListBean();
+                mList.setFirstName(rs.getString("FirstName"));
+                mList.setLastName(rs.getString("LastName"));
+                mList.setAddress(rs.getString("Address"));
+                mList.setCity(rs.getString("City"));
+                mList.setState(rs.getString("State"));
+                mList.setZipCode(rs.getString("ZipCode"));
+            
+                list.add(mList);
             }
-            request.setAttribute("customersList", resultList);
-
+            //processRequest(request, response);
+            request.setAttribute("MailingList", list);
             DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
+
             RequestDispatcher dispatcher
                     = request.getRequestDispatcher(url);
             dispatcher.forward(request, response);
-            //processRequest(request, response);
+            //this.processRequest(request, response);
 
         } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -109,39 +113,7 @@ public class QueryAllCustomers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "EmployeeHomePage.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        processRequest(request, response);
     }
 
     /**

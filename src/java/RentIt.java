@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 
-import Beans.Customer;
-import Beans.Employee;
+import Beans.Recommendation;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author MATT
  */
-public class QueryAllCustomers extends HttpServlet {
+public class RentIt extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +42,10 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueryAllCustomers</title>");
+            out.println("<title>Servlet RentIt</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RentIt at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,36 +64,45 @@ public class QueryAllCustomers extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
             //processRequest(request, response);
+            DBConnection DBConnect = new DBConnection();
+            DBConnect.connectDB();
+            if (request.getParameter("MovieName") != null) {
+                int result = DBConnect.addRental((String) request.getSession().getAttribute("userName"), request.getParameter("MovieName"));
+                if(result == 1){
+                    request.setAttribute("deleteStatus", true);
+                }
+                else
+                    request.setAttribute("deleteStatus", false);
+                
+                ResultSet rs = DBConnect.queryUserSuggestedMovies((String) request.getSession().getAttribute("userName"));
 
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+                ArrayList list = new ArrayList();
+
+                while (rs.next()) {
+                    Recommendation movie = new Recommendation();
+                    movie.setName(rs.getString("Name"));
+                    movie.setType(rs.getString("Type"));
+                    movie.setRating(rs.getInt("Rating"));
+                    movie.setPrice(rs.getDouble("DistrFee"));
+                    list.add(movie);
+                }
+                request.setAttribute("recommendList", list);
+                
+                // if user name and password are valid, forward to the homepage.
+                DBConnect.close();
+                String url = "HomePage.jsp";
+                RequestDispatcher dispatcher
+                        = request.getRequestDispatcher(url);
+                dispatcher.forward(request, response);
+                
+                
+                
+            }
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RentIt.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(RentIt.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -109,39 +117,7 @@ public class QueryAllCustomers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "EmployeeHomePage.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        //processRequest(request, response);
     }
 
     /**

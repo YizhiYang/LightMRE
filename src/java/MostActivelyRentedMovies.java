@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 
-import Beans.Customer;
-import Beans.Employee;
+import Beans.MostRentedMoviesBean;
 import DBWorks.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author MATT
  */
-public class QueryAllCustomers extends HttpServlet {
+public class MostActivelyRentedMovies extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +42,10 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet QueryAllCustomers</title>");
+            out.println("<title>Servlet MostActivelyRentedMovies</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet MostActivelyRentedMovies at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -71,21 +70,21 @@ public class QueryAllCustomers extends HttpServlet {
             }
             ResultSet rs = null;
 
-            rs = DBConnect.queryAllCustomers();
+            rs = DBConnect.queryMovieMostRented();
 
             ArrayList resultList = new ArrayList();
             while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
+                MostRentedMoviesBean movie = new MostRentedMoviesBean();
+                movie.setId(rs.getString("Id"));
+                movie.setName(rs.getString("Name"));
+                movie.setCount(rs.getInt("count"));
+                resultList.add(movie);
             }
-            request.setAttribute("customersList", resultList);
-
+            
+            request.setAttribute("ActiveMoviesList", resultList);
+      
             DBConnect.close();
-            String url = "DisplayAllCustomers.jsp";
+            String url = "MostActiveMovies.jsp";
             RequestDispatcher dispatcher
                     = request.getRequestDispatcher(url);
             dispatcher.forward(request, response);
@@ -109,39 +108,6 @@ public class QueryAllCustomers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            DBConnection DBConnect = new DBConnection();
-            if (DBConnect.connectDB() == false) {
-                processRequest(request, response);
-            }
-            ResultSet rs = null;
-
-            rs = DBConnect.queryAllCustomers();
-
-            ArrayList resultList = new ArrayList();
-            while (rs.next()) {
-                Customer customer = new Customer();
-                customer.setId(rs.getString("Id"));
-                customer.setEmail(rs.getString("Email"));
-                customer.setRating(rs.getInt("Rating"));
-                customer.setCreditCardNumber(rs.getString("CreditCardNumber"));
-                resultList.add(customer);
-            }
-            request.setAttribute("customersList", resultList);
-
-            DBConnect.close();
-            String url = "EmployeeHomePage.jsp";
-            RequestDispatcher dispatcher
-                    = request.getRequestDispatcher(url);
-            dispatcher.forward(request, response);
-            //processRequest(request, response);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
     }
 
     /**

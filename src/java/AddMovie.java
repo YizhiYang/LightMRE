@@ -42,7 +42,7 @@ public class AddMovie extends HttpServlet {
             out.println("<title>Servlet AddMovie</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddMovie at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddMovie at " + request.getSession().getAttribute("userName") + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -89,9 +89,9 @@ public class AddMovie extends HttpServlet {
 
             DBConnect.addMovie(movieName, type, rating, distrFee, copies, actors, ages, genders);
 
-//            RequestDispatcher dispatcher
-//                    = request.getRequestDispatcher("HomePageServ");
-//            dispatcher.forward(request, response);
+            RequestDispatcher dispatcher
+                    = request.getRequestDispatcher("HomePageServ");
+            dispatcher.forward(request, response);
 
             //if(zip == null)
             //processRequest(request, response);

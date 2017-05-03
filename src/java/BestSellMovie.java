@@ -71,7 +71,7 @@ public class BestSellMovie extends HttpServlet {
 
             ResultSet rs;
             //rs = DBConnect.queryBestSellers();
-            rs = DBConnect.queryUserSuggestedMovies(1);
+            rs = DBConnect.queryUserSuggestedMovies("customer1");
             ArrayList list = new ArrayList();
             while (rs.next()) {
                 Recommendation movie = new Recommendation();

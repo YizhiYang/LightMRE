@@ -25,11 +25,10 @@ import javax.servlet.http.HttpSession;
  *
  * @author MATT
  */
-
-
 public class HomePageServ extends HttpServlet {
-    
+
     int once = 0;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -50,7 +49,7 @@ public class HomePageServ extends HttpServlet {
             out.println("<title>Servlet HomePageServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>User Name: " + request.getParameter("name") + "</h1>");
+            out.println("<h1>User Name: " + (String) request.getSession().getAttribute("userName") + "</h1>");
             out.println("<h1>User Name: " + request.getParameter("var") + "</h1>");
             out.println("<h1>Password: " + request.getParameter("password") + "</h1>");
             out.println("</body>");
@@ -72,16 +71,45 @@ public class HomePageServ extends HttpServlet {
             throws ServletException, IOException {
         //this.processRequest(request, response);
         try {
+
             DBConnection DBConnect = new DBConnection();
             DBConnect.connectDB();
             if (request.getParameter("MovieName") != null) {
                 boolean result = DBConnect.deleteMovie(request.getParameter("MovieName"));
                 request.setAttribute("deleteStatus", result);
             }
-            ResultSet rs = null;
+
             String url = "ManagerHomePage.jsp";
+            if (request.getSession().getAttribute("userName").equals("customer1")) {
+
+                String username = (String) request.getSession().getAttribute("userName");
+                //processRequest(request, response);
+                ResultSet rs = DBConnect.queryUserSuggestedMovies(username);
+
+                ArrayList list = new ArrayList();
+
+                while (rs.next()) {
+                    Recommendation movie = new Recommendation();
+                    movie.setName(rs.getString("Name"));
+                    movie.setType(rs.getString("Type"));
+                    movie.setRating(rs.getInt("Rating"));
+                    movie.setPrice(rs.getDouble("DistrFee"));
+                    list.add(movie);
+                }
+                request.setAttribute("recommendList", list);
+
+                // if user name and password are valid, forward to the homepage.
+                DBConnect.close();
+                url = "HomePage.jsp";
+                RequestDispatcher dispatcher
+                        = request.getRequestDispatcher(url);
+                dispatcher.forward(request, response);
+            } else {
+                url = "ManagerHomePage.jsp";
+            }
+
             ArrayList list = new ArrayList();
-            rs = DBConnect.queryAllMovie();
+            ResultSet rs = DBConnect.queryAllMovie();
 
             while (rs.next()) {
                 Recommendation movie = new Recommendation();
@@ -93,7 +121,7 @@ public class HomePageServ extends HttpServlet {
             }
             request.setAttribute("allMovie", list);
             DBConnect.close();
-
+            //processRequest(request, response);
             RequestDispatcher dispatcher
                     = request.getRequestDispatcher(url);
             dispatcher.forward(request, response);
@@ -118,14 +146,14 @@ public class HomePageServ extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            
-            
+
             // Store name and password into Session Object
             HttpSession session = request.getSession();
 
-          
-            session.setAttribute("UserName", request.getParameter("name"));
-            session.setAttribute("Password", request.getParameter("password"));
+            if (session.getAttribute("userName") == null) {
+                session.setAttribute("userName", request.getParameter("name"));
+                session.setAttribute("password", request.getParameter("password"));
+            }
 
             DBConnection DBConnect = new DBConnection();
 
@@ -135,17 +163,22 @@ public class HomePageServ extends HttpServlet {
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(HomePageServ.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String username = request.getParameter("name");
-            String password = request.getParameter("password");
-            
 
-            session.setAttribute("userName", request.getParameter("name"));
-            session.setAttribute("password", request.getParameter("password"));
+            String username;
+            String password;
+            if (session.getAttribute("userName") == null) {
+                username = request.getParameter("name");
+                password = request.getParameter("password");
+            }
+            else{
+                username = (String) session.getAttribute("userName");
+                password = (String) session.getAttribute("password");
+            }
 
-            
+//            session.setAttribute("userName", request.getParameter("name"));
+//            session.setAttribute("password", request.getParameter("password"));
 //            String username = (String) session.getAttribute("userName");
 //            String password = (String) session.getAttribute("password");
-            
             Boolean isCustomer = DBConnect.existingCustomer(username, password);
             char accountType = ' ';
 
@@ -158,7 +191,6 @@ public class HomePageServ extends HttpServlet {
                 } else if (type == 2) {
                     accountType = 'm';
                 }
-
             }
 
             // Connect to the DB
@@ -172,7 +204,7 @@ public class HomePageServ extends HttpServlet {
                 String falseUrl = "index.html";
                 int accId = 1;
                 //get recommendation list and store them into bean class.
-                rs = DBConnect.queryUserSuggestedMovies(accId);
+                rs = DBConnect.queryUserSuggestedMovies(username);
                 //rs = DBConnect.queryAllMovie();
                 //if result set from the SQL Query is not empty
                 //store them into bean class, then store beans
@@ -197,6 +229,7 @@ public class HomePageServ extends HttpServlet {
                     dispatcher.forward(request, response);
                 } // if not, then forward back to the login page.
             } else if (accountType == 'm') {
+                //processRequest(request, response);
                 String url = "ManagerHomePage.jsp";
                 String falseUrl = "index.html";
                 ArrayList list = new ArrayList();
@@ -214,7 +247,7 @@ public class HomePageServ extends HttpServlet {
                 DBConnect.close();
 
                 if (result) {
-                    
+
                     RequestDispatcher dispatcher
                             = request.getRequestDispatcher(url);
                     dispatcher.forward(request, response);
@@ -226,14 +259,12 @@ public class HomePageServ extends HttpServlet {
                     dispatcher.forward(request, response);
                 }
             } else if (accountType == 'e') {
-                String EmployeeUrl = "EmployeeHomePage.jsp";
-            
-                
-                
+                String EmployeeUrl = "QueryAllCustomers";
+
                 RequestDispatcher dispatcher
                         = request.getRequestDispatcher(EmployeeUrl);
                 dispatcher.forward(request, response);
-                //processRequest(request, response);
+
             }
 
         } catch (SQLException ex) {

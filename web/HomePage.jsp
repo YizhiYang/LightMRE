@@ -8,11 +8,20 @@
  <link rel="stylesheet" href="css/style.css" type="text/css">
 <html>
     <head>
+                <script>
+            function rentFalse() {
+                alert("Rental failure");
+            }
+
+            function rentSuccess() {
+                alert("Rental Successful");
+            }
+        </script>
     </head>
     <body>
 
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Account</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/CustomerHoldMovies">My movies</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
@@ -40,16 +49,16 @@
                 </table>
             </div>
             <div class="tbl-content">
-                <table cellpadding="0" cellspacing="0" border="0">
+                <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
                         <c:forEach items="${recommendList}" var="dList">
                             <tr>
-                                <td>${dList.name}</td>
-                                <td>${dList.type}</td>
-                                <td>${dList.price}</td>
-                                <td>${dList.rating}</td>
-                                <td>${dList.price}</td>
-                                <td><button type="button" onclick="rentIt()">Rent It</button></td>
+                                <td contenteditable='true'>${dList.name}</td>
+                                <td contenteditable='true'>${dList.type}</td>
+                                <td contenteditable='true'>${dList.price}</td>
+                                <td contenteditable='true'>${dList.rating}</td>
+                                <td contenteditable='true'>${dList.price}</td>
+                                <td><button type="button" onclick="rentIt(this)">Rent It</button></td>
                             </tr>
                         </c:forEach>
 
@@ -58,8 +67,20 @@
 
             </div>
             
-            
         </section>
+        
+         <c:choose>
+            <c:when test="${deleteStatus =='false'}">
+                <script> rentFalse()</script> 
+                <br />
+            </c:when>    
+            <c:when test="${deleteStatus =='true'}">
+                <script> rentSuccess()</script>
+                <br />
+            </c:when>
+            <c:otherwise>
+            </c:otherwise>
+        </c:choose>
 
 
         <!-- follow me template -->
@@ -78,8 +99,10 @@
                 window.location = "Search.jsp"
             }
 
-            function rentIt() {
-                alert("Are you sure?");
+            function rentIt(element) {
+                var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
+                confirm("Are you sure to rent " + name + " ?");
+                location.href = "RentIt?MovieName=" + name;
             }
 
         </script>

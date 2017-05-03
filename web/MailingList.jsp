@@ -8,39 +8,31 @@
 <link rel="stylesheet" href="css/style.css" type="text/css">
 <html>
     <head>
-        <script>
-            function deleteFalse() {
-                alert("He/She is on duty, cannot be fired");
-            }
-
-            function deleteTrue() {
-                alert("Delete Successfully");
-            }
-        </script>
     </head>
     <body>
 
         <div class = "topnav">
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/MailingList">Mailing list</a>
-            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Orders</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Employees</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
 
 
         <section>
             <!--for demo wrap-->
-            <h1 id = "youMayLike">All Customer</h1>
+            <h1 id = "youMayLike">Mailing list</h1>
             <div class="tbl-header">
                 <table cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Email</th>
-                            <th>Rating</th>
-                            <th>Credit Card Number</th>
-                            <th></th>
-                             <th><button onclick="location.href = 'AddCustomer.jsp'">Add Customer</button></th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>ZipCode</th>
+                           
                         </tr>
                     </thead>
                 </table>
@@ -48,14 +40,16 @@
             <div class="tbl-content">
                 <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
-                        <c:forEach items="${customersList}" var="dList">
+                        <c:forEach items="${MailingList}" var="dList">
                             <tr>
-                                <td contenteditable='true'>${dList.id}</td>
-                                <td contenteditable='true'>${dList.email}</td>
-                                <td contenteditable='true'>${dList.rating}</td>
-                                <td contenteditable='true'>${dList.creditCardNumber}</td>
-                                <td><button type="button" onclick="getId(this)">Edit</button></td>
-                                <td><button type="button" onclick="deleteEmployee(this)">Delete</button></td>
+                                <td contenteditable='true'>${dList.lastName}</td>
+                                <td contenteditable='true'>${dList.firstName}</td>
+                                <td contenteditable='true'>${dList.address}</td>
+                                <td contenteditable='true'>${dList.city}</td>
+                                <td contenteditable='true'>${dList.state}</td>
+                                <td contenteditable='true'>${dList.zipCode}</td>
+                               
+                                
                             </tr>
                         </c:forEach>
 

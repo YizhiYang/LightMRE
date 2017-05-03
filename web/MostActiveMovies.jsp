@@ -22,25 +22,23 @@
 
         <div class = "topnav">
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/MailingList">Mailing list</a>
-            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Orders</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Employees</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
         </div>
 
 
         <section>
             <!--for demo wrap-->
-            <h1 id = "youMayLike">All Customer</h1>
+            <h1 id = "youMayLike">Most Actively Rented Movies</h1>
             <div class="tbl-header">
                 <table cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Email</th>
-                            <th>Rating</th>
-                            <th>Credit Card Number</th>
-                            <th></th>
-                             <th><button onclick="location.href = 'AddCustomer.jsp'">Add Customer</button></th>
+                            <th>Movie ID</th>
+                            <th>Name</th>
+                            <th>Amount</th>
+            
                         </tr>
                     </thead>
                 </table>
@@ -48,14 +46,12 @@
             <div class="tbl-content">
                 <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
-                        <c:forEach items="${customersList}" var="dList">
+                        <c:forEach items="${ActiveMoviesList}" var="dList">
                             <tr>
                                 <td contenteditable='true'>${dList.id}</td>
-                                <td contenteditable='true'>${dList.email}</td>
-                                <td contenteditable='true'>${dList.rating}</td>
-                                <td contenteditable='true'>${dList.creditCardNumber}</td>
-                                <td><button type="button" onclick="getId(this)">Edit</button></td>
-                                <td><button type="button" onclick="deleteEmployee(this)">Delete</button></td>
+                                <td contenteditable='true'>${dList.name}</td>
+                                <td contenteditable='true'>${dList.count}</td>
+                                
                             </tr>
                         </c:forEach>
 

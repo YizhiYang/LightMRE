@@ -20,14 +20,14 @@
     </head>
     <body>
 
-            <div class = "topnav">
-                <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
-                <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
-                <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
-                <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
-                <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">More</a>
-                <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
-            </div>
+        <div class = "topnav">
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
+            <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="SalesReport.jsp">Sales Report</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+        </div>
 
         <section>
             <!--for demo wrap-->
@@ -42,7 +42,8 @@
                             <th>Rating</th>
                             <th>Price</th>
                             <th><button onclick="location.href = 'AddMovie.jsp'">Add Movie</button></th>
-                            <th></th>
+                            <th><button onclick="location.href = 'http://localhost:8080/LightMRE/MostActivelyRentedMovies'">Active Movies</button></th>
+
                         </tr>
                     </thead>
                 </table>
@@ -65,9 +66,6 @@
                     </tbody>
                 </table>
             </div>
-
-
-
 
         </section>
 
