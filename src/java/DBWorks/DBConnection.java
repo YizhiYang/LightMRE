@@ -355,6 +355,10 @@ public class DBConnection {
                     
                     stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, `M/F`) VALUES (?,?,?,?)");
                     stmt.setInt(1, ActorId);
+                    
+                    if(ActorName[i].charAt(0) == ' '){
+                        ActorName[i] = ActorName[i].substring(1);
+                    }
                     stmt.setString(2, ActorName[i]);
                     stmt.setInt(3, age);
                     stmt.setString(4, ActorGender[i].replaceAll("\\s", ""));
@@ -435,8 +439,8 @@ public class DBConnection {
             return false;
         }
     }
-
-    public boolean editMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies) {
+    
+    public boolean editMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies, String ActorName, String ActorAge, String ActorGender) {
         try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("UPDATE Movie SET Name = ?, Type = ?, distrFee = ?, NumOfCopies = ? WHERE Id = ?");
@@ -693,7 +697,26 @@ public class DBConnection {
             return 0;
         }
     }
-
+    public ResultSet getCustomerForEdit(String SSN){
+        /*
+        String SSN, String lastName, String firstName,
+            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
+            String dO, String accountType, String username, String password
+        */
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Person.SSN, Person.lastname, Person.Firstname, Person.Address, Location.city, Location.State, Person.Zipcode, Person.telephone, Customer.email, Customer.Rating, Customer.CreditCardNumber, Account.DateOpened, Account.Type, Account.username, Account.password\n" +
+"FROM Person, Customer, Account, Location\n" +
+"WHERE Person.SSN = Customer.Id AND Account.Customer = Person.SSN AND Location.Zipcode = Person.ZipCode AND Person.SSN = ? ");
+            stmt.setString(1, SSN);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     /*
      * edit Customer information
     ex: t.editCustomer("555-55-6555", "HLLO", "MOTO", "SSR", "1", "Heaven2", "Sky", "542-542-1234", "HACK@N.com", "0","123-123-123", "2010-10-10", "unlimited-2","gaga", "taata");
@@ -783,6 +806,9 @@ public class DBConnection {
 
                     stmt = conn.prepareStatement("INSERT INTO Actor(Id, Name, Age, `M/F`) VALUES (?,?,?,?)");
                     stmt.setInt(1, ActorId);
+                    if(aName[i].charAt(0) == ' '){
+                        aName[i] = aName[i].substring(1);
+                    }
                     stmt.setString(2, aName[i]);
                     stmt.setInt(3, age);
                     stmt.setString(4, amf[i]);
@@ -1174,6 +1200,35 @@ public class DBConnection {
             return null;
         }
     }
+     public ResultSet queryMovieRentalbyType(String name) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND m.Type LIKE ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
+            stmt.setString(1, "%" + name + "%");
+
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public ResultSet queryMovieRentalbyCustomer(String LastName,String FirstName) {
+         try {
+             PreparedStatement stmt = null;
+             stmt = conn.prepareStatement("SELECT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND p.LastName = ? AND p.FirstName = ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
+             stmt.setString(1, LastName.replaceAll("\\s+",""));
+             stmt.setString(2 , FirstName.replaceAll("\\s+",""));
+
+             ResultSet rs = stmt.executeQuery();
+             return rs;
+
+         } catch (SQLException ex) {
+             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+             return null;
+         }
+     } 
 
     /*
      * Get the monthly Sales Report
