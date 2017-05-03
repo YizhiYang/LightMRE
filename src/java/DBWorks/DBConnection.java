@@ -454,7 +454,24 @@ public class DBConnection {
             return false;
         }
     }
-
+    /*
+     
+    */
+    public ResultSet getEmployeeForEdit(String Id){
+        try{
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Person.SSN, Person.LastName, Person.FirstName, Person.Address, Location.City, Location.State, Person.Zipcode, Person.telephone, Employee.StartDate, Employee.HourlyRate, Employee.username, Employee.password, Employee.isManager\n" +
+            "FROM moviedb.Person, moviedb.Location, moviedb.Employee\n" +
+            "WHERE Employee.Id = ? AND Person.SSN = Employee.SSN AND Person.Zipcode = Location.Zipcode\n" +
+            "ORDER BY Person.SSN");
+            stmt.setString(1, Id);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        }catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } 
+    }
     /*
      * Edit information of an employee
      * EX;t.editEmployee("3","442-55-6666","gggA","as","1234","Heaven","Sky","0","987-654-3211","2009-10-10","10","employee3","employee","0");
@@ -479,31 +496,35 @@ public class DBConnection {
                 java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(StartDate);
                 Date sd = new Date(gg.getTime());
                 int hr = Integer.parseInt(HourlyRate);
-
-                stmt = conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
+                
+                 //add new zipcode if didn't exist
+                stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+                stmt.setInt(1, zc);
+                stmt.setString(2, city);
+                stmt.setString(3, state);
+                stmt.executeUpdate();
+                
+                stmt = conn.prepareStatement("UPDATE Person, Employee SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ?, Person.SSN = ? WHERE Person.SSN = Employee.SSN AND Employee.Id = ?");
                 stmt.setString(1, LastName);
                 stmt.setString(2, FirstName);
                 stmt.setString(3, Address);
                 stmt.setInt(4, zc);
                 stmt.setString(5, Telephone);
                 stmt.setString(6, SSN);
+                stmt.setString(7,Id);
                 stmt.executeUpdate();
-                //add new zipcode if didn't exist
-                stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
-                stmt.setInt(1, zc);
-                stmt.setString(2, city);
-                stmt.setString(3, state);
-                stmt.executeUpdate();
+               
 
                 int iM = Integer.parseInt(isM);
                 //update employee table
-                stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ?, username = ?, password = ?, isManager = ? WHERE Id = ?");
+                stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ?, username = ?, password = ?, isManager = ?, SSN = ? WHERE Id = ?");
                 stmt.setDate(1, sd);
                 stmt.setInt(2, hr);
                 stmt.setString(3, username);
                 stmt.setString(4, password);
                 stmt.setInt(5, iM);
-                stmt.setInt(6, id);
+                stmt.setString(6,SSN);
+                stmt.setInt(7, id);
                 stmt.executeUpdate();
 
                 return true;
