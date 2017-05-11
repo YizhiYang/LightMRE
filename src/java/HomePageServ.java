@@ -234,10 +234,13 @@ public class HomePageServ extends HttpServlet {
                 String falseUrl = "index.html";
                 ArrayList list = new ArrayList();
                 rs = DBConnect.queryAllMovie();
+                
 
                 while (rs.next()) {
                     Recommendation movie = new Recommendation();
                     movie.setName(rs.getString("Name"));
+                    String actors = DBConnect.getActors(rs.getString("Name"));
+                    movie.setActor(actors);
                     movie.setType(rs.getString("Type"));
                     movie.setRating(rs.getInt("Rating"));
                     movie.setPrice(rs.getDouble("DistrFee"));

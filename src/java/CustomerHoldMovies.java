@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import Beans.CurrentlyHoldMovie;
 import Beans.Employee;
 import Beans.Movie;
 import DBWorks.DBConnection;
@@ -78,10 +79,11 @@ public class CustomerHoldMovies extends HttpServlet {
             rs = DBConnect.queryCurrentlyHeldMovies(name);
 
             while (rs.next()) {
-                Movie movie = new Movie();
+                CurrentlyHoldMovie movie = new CurrentlyHoldMovie();
                 movie.setName(rs.getString("Name"));
                 movie.setType(rs.getString("Type"));
                 movie.setRating(rs.getInt("Rating"));
+                movie.setOrderId(rs.getInt("OrderId"));
             
                 list.add(movie);
             }

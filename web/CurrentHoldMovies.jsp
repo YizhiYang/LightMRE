@@ -22,7 +22,7 @@
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/RentalHistory">History</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 
@@ -33,6 +33,7 @@
                 <table cellpadding="0" cellspacing="0" border="0">
                     <thead>
                         <tr>
+                            <th>Order ID</th>
                             <th>Movie</th>
                             <th>Type</th>
                             <th>Rating</th>
@@ -42,14 +43,15 @@
                 </table>
             </div>
             <div class="tbl-content">
-                <table cellpadding="0" cellspacing="0" border="0">
+                <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
                     <c:forEach items="${currentHeldList}" var="mList">
                         <tr>
+                            <td>${mList.orderId}</td>
                             <td>${mList.name}</td>
                             <td>${mList.type}</td>
                             <td>${mList.rating}</td>
-                            <td><button type="button" onclick="rentIt()">Return It</button></td>
+                            <td><button type="button" onclick="returnIt(this)">Return It</button></td>
                         </tr>
                     </c:forEach>
 
@@ -63,5 +65,23 @@
                 </br>
                 LightMRE
             </div>
+            
+            <script>
+            function displaymessage() {
+                window.location = "AboutUs.jsp"
+            }
+            
+            function forwardToSearch() {
+                window.location = "Search.jsp"
+            }
+
+            function returnIt(element) {
+                var id = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
+                var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[1].innerHTML;
+                confirm("Are you sure to return " + name + "?");
+                 location.href = "ReturnIt?ID=" + id +"&MovieName="+ name;
+            }
+
+        </script>
     </body>
 </html>

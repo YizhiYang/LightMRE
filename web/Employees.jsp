@@ -26,7 +26,7 @@
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
             <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="SalesReport.jsp">Sales Report</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 
@@ -42,7 +42,7 @@
                             <th>Start Date</th>
                             <th>Hourly Rate</th>
                             <th><button onclick="location.href = 'TopEmployee'">Who is the top?</button></th>
-                             <th><button onclick="location.href = 'AddEmployee.jsp'">Add Employee</button></th>
+                            <th><button onclick="location.href = 'AddEmployee.jsp'">Add Employee</button></th>
                         </tr>
                     </thead>
                 </table>
@@ -56,7 +56,7 @@
                                 <td contenteditable='true'>${dList.SSN}</td>
                                 <td contenteditable='true'>${dList.date}</td>
                                 <td contenteditable='true'>${dList.hourlyRate}</td>
-                                <td><button type="button" onclick="getId(this)">Edit</button></td>
+                                <td><button type="button" onclick="editEmployee(this)">Edit</button></td>
                                 <td><button type="button" onclick="deleteEmployee(this)">Delete</button></td>
                             </tr>
                         </c:forEach>
@@ -116,6 +116,14 @@
                 var id = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Are you sure you want to delete " + id + "?");
                 location.href = "ListOfEmployees?EmployeeId=" + id;
+            }
+
+            function editEmployee(element) {
+
+                // getting which col is selected, returned the name
+                var id = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
+                confirm("Are you sure you want to edit " + id + "?");
+                location.href = "EditEmployeeServlet?EmployeeId=" + id;
             }
         </script>
     </body>

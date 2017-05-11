@@ -22,11 +22,12 @@
 
         <div class = "topnav">
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
+           
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/ListOfEmployees">Employees</a>
             <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Customers</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
             <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="SalesReport.jsp">Sales Report</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
         <section>
@@ -55,7 +56,7 @@
                             <tr>
                                 <td contenteditable='true' id = "movieName">${dList.name}</td>
                                 <td contenteditable='true'>${dList.type}</td>
-                                <td contenteditable='true'>${dList.price}</td>
+                                <td contenteditable='true'>${dList.actor}</td>
                                 <td contenteditable='true'>${dList.rating}</td>
                                 <td contenteditable='true'>${dList.price}</td>
                                 <td><button type="button" onclick="editMovie(this)">Edit</button></td>
@@ -96,7 +97,7 @@
             }
 
             function forwardToSearch() {
-                window.location = "Search.jsp"
+                window.location = "ManagerSearch.jsp"
             }
 
             function editMovie(element) {
@@ -104,6 +105,7 @@
                 // getting which col is selected, returned the name
                 var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Edit " + name + "?");
+                location.href = "EditMovieServlet?MovieName=" + name;
             }
             function deleteMovie(element) {
                 // getting which col is selected, returned the name

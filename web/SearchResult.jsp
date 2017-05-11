@@ -13,10 +13,13 @@
     </head>
     <body>
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Account</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage(); return false;" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/HomePageServ">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Account</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/CustomerHoldMovies">My movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/RentalHistory">History</a>
+            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 
@@ -38,7 +41,7 @@
                 </table>
             </div>
             <div class="tbl-content">
-                <table cellpadding="0" cellspacing="0" border="0">
+                <table cellpadding="0" cellspacing="0" border="0" id="mytable">
                     <tbody>
                         <c:forEach items="${searchList}" var="eList">
                             <tr>
@@ -47,7 +50,7 @@
                                 <td>${eList.price}</td>
                                 <td>${eList.rating}</td>
                                 <td>${eList.price}</td>
-                                <td><button type="button" onclick="rentIt()">Rent It</button></td>
+                                <td><button type="button" onclick="rentIt(this)">Rent It</button></td>
                             </tr>
                         </c:forEach>
 
@@ -66,5 +69,23 @@
             LightMRE
         </div>
 
+
+        <script>
+            function find() {
+                //session.setAttribute("keyword", document.getElementById("search"));
+
+                window.location = "SearchResult.jsp"
+            }
+
+            function forwardToSearch() {
+                window.location = "Search.jsp"
+            }
+            
+                        function rentIt(element) {
+                var name = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
+                confirm("Are you sure to rent " + name + " ?");
+                location.href = "RentIt?MovieName=" + name;
+            }
+        </script>
     </body>
 </html>

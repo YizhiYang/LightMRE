@@ -46,7 +46,7 @@ public class QueryAllCustomers extends HttpServlet {
             out.println("<title>Servlet QueryAllCustomers</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet QueryAllCustomers at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet QueryAllCustomers at " + request.getSession().getAttribute("userName") + request.getSession().getAttribute("password")+ "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,6 +69,11 @@ public class QueryAllCustomers extends HttpServlet {
             if (DBConnect.connectDB() == false) {
                 processRequest(request, response);
             }
+            
+              if (request.getParameter("CustomerId") != null) {
+                boolean result = DBConnect.deleteCustomer(request.getParameter("CustomerId"));
+                request.setAttribute("deleteStatus", result);
+            }
             ResultSet rs = null;
 
             rs = DBConnect.queryAllCustomers();
@@ -84,11 +89,21 @@ public class QueryAllCustomers extends HttpServlet {
             }
             request.setAttribute("customersList", resultList);
 
-            DBConnect.close();
+            
+            
             String url = "DisplayAllCustomers.jsp";
+
+            String employeeName = (String) request.getSession().getAttribute("userName");
+            String employeePassword = (String) request.getSession().getAttribute("password");
+            //processRequest(request, response);
+            if ((DBConnect.existingEmployee(employeeName, employeePassword)) == 1) {
+                url = "EmployeeHomePage.jsp";
+                
+            }
             RequestDispatcher dispatcher
                     = request.getRequestDispatcher(url);
             dispatcher.forward(request, response);
+            DBConnect.close();
             //processRequest(request, response);
 
         } catch (SQLException ex) {
@@ -130,7 +145,9 @@ public class QueryAllCustomers extends HttpServlet {
             request.setAttribute("customersList", resultList);
 
             DBConnect.close();
+
             String url = "EmployeeHomePage.jsp";
+
             RequestDispatcher dispatcher
                     = request.getRequestDispatcher(url);
             dispatcher.forward(request, response);

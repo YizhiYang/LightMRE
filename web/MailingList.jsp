@@ -12,10 +12,10 @@
     <body>
 
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Movies</a>
-            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Employees</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Home</a>
+            <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/MailingList">Mailing list</a>
+            <a class = "HomeButton" onClick="forwardToUserSuggestList()" style="text-decoration:none" href="#">Suggest List</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 

@@ -27,7 +27,7 @@
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/RentalHistory">History</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 
@@ -41,6 +41,7 @@
                             <th>Id</th>
                             <th>Date Time</th>
                             <th>Return Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                 </table>
@@ -53,6 +54,7 @@
                                 <td contenteditable='true'>${dList.id}</td>
                                 <td contenteditable='true'>${dList.dataTime}</td>
                                 <td contenteditable='true'>${dList.returnDate}</td>
+                                <td><button type="button" >Rate It</button></td>
                             </tr>
                         </c:forEach>
 

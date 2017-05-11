@@ -21,10 +21,10 @@
     <body>
 
         <div class = "topnav">
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">Home</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/QueryAllCustomers">Home</a>
             <a class = "HomeButton" style="text-decoration:none" href="http://localhost:8080/LightMRE/MailingList">Mailing list</a>
-            <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Orders</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="forwardToUserSuggestList()" style="text-decoration:none" href="#">Suggest List</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
 
 
@@ -114,6 +114,10 @@
                 var id = document.getElementById("mytable").rows[element.parentNode.parentNode.rowIndex].cells[0].innerHTML;
                 confirm("Are you sure you want to delete " + id + "?");
                 location.href = "ListOfEmployees?EmployeeId=" + id;
+            }
+            
+            function forwardToUserSuggestList() {
+                window.location = "UsersSuggestionList.jsp"
             }
         </script>
     </body>

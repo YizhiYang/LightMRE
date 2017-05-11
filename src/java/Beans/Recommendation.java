@@ -22,6 +22,7 @@ public class Recommendation implements Serializable{
     private String actor;
     private double price;
     private int rating;
+   
     
     
     // PLEASE refer to the bean naming principle,

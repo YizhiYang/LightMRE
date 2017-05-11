@@ -434,24 +434,6 @@ public class DBConnection {
         }
     }
 
-    public boolean editMovie(int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies) {
-        try {
-            PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("UPDATE Movie SET Name = ?, Type = ?, distrFee = ?, NumOfCopies = ? WHERE Id = ?");
-            stmt.setString(1, name);
-            stmt.setString(2, Type);
-            BigDecimal fee = new BigDecimal(distrFee);
-            stmt.setBigDecimal(3, fee);
-            stmt.setInt(4, NumOfCopies);
-            stmt.setInt(5, Id);
-            stmt.executeUpdate();
-
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
 
     /*
      * Edit information of an employee
@@ -474,18 +456,10 @@ public class DBConnection {
             if (rs.next()) {
                 int zc = Integer.parseInt(Zipcode);
 
-                java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(StartDate);
+                java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse("2017-04-30");
                 Date sd = new Date(gg.getTime());
                 int hr = Integer.parseInt(HourlyRate);
 
-                stmt = conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
-                stmt.setString(1, LastName);
-                stmt.setString(2, FirstName);
-                stmt.setString(3, Address);
-                stmt.setInt(4, zc);
-                stmt.setString(5, Telephone);
-                stmt.setString(6, SSN);
-                stmt.executeUpdate();
                 //add new zipcode if didn't exist
                 stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
                 stmt.setInt(1, zc);
@@ -493,15 +467,26 @@ public class DBConnection {
                 stmt.setString(3, state);
                 stmt.executeUpdate();
 
+                stmt = conn.prepareStatement("UPDATE Person, Employee SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ?, Person.SSN = ? WHERE Person.SSN = Employee.SSN AND Employee.Id = ?");
+                stmt.setString(1, LastName);
+                stmt.setString(2, FirstName);
+                stmt.setString(3, Address);
+                stmt.setInt(4, zc);
+                stmt.setString(5, Telephone);
+                stmt.setString(6, SSN);
+                stmt.setString(7, Id);
+                stmt.executeUpdate();
+
                 int iM = Integer.parseInt(isM);
                 //update employee table
-                stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ?, username = ?, password = ?, isManager = ? WHERE Id = ?");
+                stmt = conn.prepareStatement("UPDATE Employee SET StartDate = ?, HourlyRate = ?, username = ?, password = ?, isManager = ?, SSN = ? WHERE Id = ?");
                 stmt.setDate(1, sd);
                 stmt.setInt(2, hr);
                 stmt.setString(3, username);
                 stmt.setString(4, password);
                 stmt.setInt(5, iM);
-                stmt.setInt(6, id);
+                stmt.setString(6, SSN);
+                stmt.setInt(7, id);
                 stmt.executeUpdate();
 
                 return true;
@@ -677,59 +662,51 @@ public class DBConnection {
      * TESTED ; need discussion
      */
     public boolean editCustomer(String SSN, String lastName, String firstName,
-            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
-            String dO, String accountType, String username, String password) {
+            String address, String city, String state, String zp, String telephone, String email, String RT, String creditCardNumber,
+            String accountType, String username, String password) {
         try {
             PreparedStatement stmt = null;
             //check if the customer exist         
-            stmt = conn.prepareStatement("SELECT * FROM Person WHERE SSN = ?");
-            stmt.setString(1, SSN);
-            ResultSet rs = stmt.executeQuery();
 
-            //does Customer exist?
-            if (rs.next()) {
-                int zipCode = Integer.parseInt(zp);
-                int rating = Integer.parseInt(RT);
-                java.util.Date gg = new SimpleDateFormat("yyyy-MM-dd").parse(dO);
-                Date dateOpened = new Date(gg.getTime());
-                //update location if it's new  
-                stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
-                stmt.setInt(1, zipCode);
-                stmt.setString(2, city);
-                stmt.setString(3, state);
-                stmt.executeUpdate();
-                //update the person 
-                stmt = conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, zipcode = ?, telephone = ? WHERE SSN = ?");
-                stmt.setString(1, lastName);
-                stmt.setString(2, firstName);
-                stmt.setString(3, address);
-                stmt.setInt(4, zipCode);
-                stmt.setString(5, telephone);
-                stmt.setString(6, SSN);
-                stmt.executeUpdate();
-                //update customer
-                stmt = conn.prepareStatement("UPDATE Customer SET Email = ?, Rating = ?, CreditCardNumber = ? WHERE Id = ?");
-                stmt.setString(1, email);
-                stmt.setInt(2, rating);
-                stmt.setString(3, creditCardNumber);
-                stmt.setString(4, SSN);
-                stmt.executeUpdate();
+            int zipCode = Integer.parseInt(zp);
+            int rating = Integer.parseInt(RT);
 
-                //update
-                stmt = conn.prepareStatement("UPDATE Account Set DateOpened = ?, Type = ?, username = ?, password = ? WHERE Customer = ?");
-                stmt.setDate(1, dateOpened);
-                stmt.setString(2, accountType);
-                stmt.setString(3, username);
-                stmt.setString(4, password);
-                stmt.setString(5, SSN);
-                stmt.executeUpdate();
-                return true;
-            }
-            return false;
+            //update location if it's new  
+            stmt = conn.prepareStatement("INSERT IGNORE INTO Location(ZipCode, City, State) VALUES (?, ?, ?)");
+            stmt.setInt(1, zipCode);
+            stmt.setString(2, city);
+            stmt.setString(3, state);
+            stmt.executeUpdate();
+            //update the person 
+//                stmt = conn.prepareStatement("UPDATE Person SET LastName = ?, FirstName = ?, Address = ?, ZipCode = ?, Telephone = ? WHERE SSN = ?");
+//                stmt.setString(1, lastName);
+//                stmt.setString(2, firstName);
+//                stmt.setString(3, address);
+//                stmt.setInt(4, zipCode);
+//                stmt.setString(5, telephone);
+//                stmt.setString(6, SSN);
+//                stmt.executeUpdate();
+
+            //update customer
+            stmt = conn.prepareStatement("UPDATE Customer SET Email = ?, Rating = ?, CreditCardNumber = ? WHERE Id = ?");
+            stmt.setString(1, email);
+            stmt.setInt(2, rating);
+            stmt.setString(3, creditCardNumber);
+            stmt.setString(4, SSN);
+            stmt.executeUpdate();
+
+            //update
+            stmt = conn.prepareStatement("UPDATE Account Set Type = ?, username = ?, password = ? WHERE Customer = ?");
+
+            stmt.setString(1, accountType);
+            stmt.setString(2, username);
+            stmt.setString(3, password);
+            stmt.setString(4, SSN);
+            stmt.executeUpdate();
+            return true;
+
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        } catch (ParseException e2) {
             return false;
         }
     }
@@ -990,7 +967,7 @@ public class DBConnection {
             int accId = getAccId(username);
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT \n"
-                    + "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating\n"
+                    + "    moviedb.movie.Name, moviedb.movie.Type, moviedb.movie.Rating, moviedb.rental.OrderId\n"
                     + "FROM\n"
                     + "    moviedb.movie,\n"
                     + "    moviedb.rental\n"
@@ -1051,6 +1028,7 @@ public class DBConnection {
                     + "    moviedb.customer.Id = moviedb.person.SSN;");
             stmt.setInt(1, accId);
             ResultSet rs = stmt.executeQuery();
+            rs.next();
             return rs;
 
         } catch (SQLException ex) {
@@ -1099,34 +1077,14 @@ public class DBConnection {
     }
 
     /*
-      * Get a list of movie rental given the movie name
-      * The output for now is the movie name, the person Lastname and firstname
-      * TESTED
-     */
-    public ResultSet queryMovieRentalbyName(String name) {
-        try {
-            PreparedStatement stmt = null;
-            stmt = conn.prepareStatement("SELECT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND m.Name = ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
-            stmt.setString(1, name);
-
-            ResultSet rs = stmt.executeQuery();
-            return rs;
-
-        } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    /*
      * Get the monthly Sales Report
      * TESTED 
      */
-    public ResultSet queryMonthlySalesReport(String month, String year) {
+    public double queryMonthlySalesReport(String month, String year) {
         try {
-            String Startdates = year + "-" + month + "-" + "01";
-            String EndDates = year + "-" + month + "-";
-            switch (Integer.parseInt(month)) {
+            String Startdates = year.replaceAll("\\s+", "") + "-" + month.replaceAll("\\s+", "") + "-" + "01";
+            String EndDates = year.replaceAll("\\s+", "") + "-" + month.replaceAll("\\s+", "") + "-";
+            switch (Integer.parseInt(month.replaceAll("\\s+", ""))) {
                 case 1:
                 case 3:
                 case 5:
@@ -1137,7 +1095,18 @@ public class DBConnection {
                     EndDates += "31";
                     break;
                 case 2:
-                    EndDates += "28";
+                    boolean g = true;
+                    if (Integer.parseInt(year) % 4 == 0) {
+                        if (Integer.parseInt(year) % 100 == 0) {
+                            if (Integer.parseInt(year) % 400 == 0) {
+                                EndDates += "29";
+                                g = false;
+                            }
+                        }
+                    }
+                    if (g) {
+                        EndDates += "28";
+                    }
                     break;
                 case 4:
                 case 6:
@@ -1152,43 +1121,50 @@ public class DBConnection {
             stmt.setString(2, EndDates);
 
             ResultSet rs = stmt.executeQuery();
-            return rs;
+            double ans2 = -1;
+            if (rs.next()) {
+                String ans = rs.getString(1);
+                if (ans == null) {
+                    ans2 = 0;
+                } else {
+                    ans2 = Double.parseDouble(ans.replaceAll("\\s", ""));
+                }
+            }
+            return ans2;
 
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            return -1;
         }
     }
-    
-    
-    public boolean checkIfAvailable(String movieId){
-        try{
+
+    public boolean checkIfAvailable(String movieId) {
+        try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT movie.NumCopies FROM movie WHERE movie.Id = ?;");
             stmt.setString(1, movieId);
             ResultSet rs = stmt.executeQuery();
             int numCopies = -1;
-            if(rs.next()){
+            if (rs.next()) {
                 numCopies = rs.getInt("NumCopies");
             }
-            if(numCopies > 0){
+            if (numCopies > 0) {
                 return true;
             }
             return false;
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
-    
-public int addRental(String username, String movieName){
-        try{
-            int ordId = getNumberOfOrders()+1;
+
+    public int addRental(String username, String movieName) {
+        try {
+            int ordId = getNumberOfOrders() + 1;
             int accId = getAccId(username);
             String movieId = getMovieId(movieName);
             int cusRepId = getNumberOfEmployees();
-            if(!checkIfAvailable(movieId)){
+            if (!checkIfAvailable(movieId)) {
                 return 2;
             }
             PreparedStatement stmt = null;
@@ -1211,47 +1187,404 @@ public int addRental(String username, String movieName){
         }
     }
 
-public String getMovieId(String movieName){
-        try{
+    public String getMovieId(String movieName) {
+        try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT Movie.Id FROM Movie WHERE Movie.Name = ?");
             stmt.setString(1, movieName);
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getString("Movie.Id");
             }
             return null;
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
-    public int getNumberOfEmployees(){
-        try{
+
+    public int getNumberOfEmployees() {
+        try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.employee");
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
-                return (int)(Math.random()*rs.getInt("COUNT(*)")+1);
+            if (rs.next()) {
+                return (int) (Math.random() * rs.getInt("COUNT(*)") + 1);
             }
             return -1;
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
     }
-    public int getNumberOfOrders(){
-        try{
+
+    public int getNumberOfOrders() {
+        try {
             PreparedStatement stmt = null;
             stmt = conn.prepareStatement("SELECT COUNT(*) FROM moviedb.order");
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt("COUNT(*)");
             }
             return -1;
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
     }
+
+    public boolean addReturnRental(String movieName, String orderId) {
+        try {
+            PreparedStatement stmt = null;
+            String movieId = getMovieId(movieName);
+            int ordId = Integer.parseInt(orderId);
+            stmt = conn.prepareStatement("UPDATE moviedb.order SET ReturnDate = CURDATE() WHERE moviedb.order.Id = ?;");
+            stmt.setInt(1, ordId);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement("UPDATE movie SET NumCopies = NumCopies + 1 WHERE movie.Id = ?;");
+            stmt.setString(1, movieId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public ResultSet getEmployeeForEdit(String Id) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Employee.Id, Person.SSN, Person.LastName, Person.FirstName, Person.Address, Location.City, Location.State, Person.ZipCode, Person.Telephone, Employee.StartDate, Employee.HourlyRate, Employee.username, Employee.password, Employee.isManager\n"
+                    + "FROM moviedb.Person, moviedb.Location, moviedb.Employee\n"
+                    + "WHERE Employee.Id = ? AND Person.SSN = Employee.SSN AND Person.Zipcode = Location.Zipcode\n"
+                    + "ORDER BY Person.SSN");
+            stmt.setString(1, Id);
+            ResultSet rs = stmt.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public boolean editMovie(String Id, String Name, String Type, String Rt, String DistrFee, String NC, String AN, String AA, String AG) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("UPDATE `moviedb`.Movie SET Movie.Name = ?, Movie.Type = ?, Movie.Rating = ?, Movie.DistrFee = ?, Movie.NumCopies = ? WHERE Movie.Id = ?");
+            int Rating = Integer.parseInt(Rt);
+            int NumCopies = Integer.parseInt(NC);
+
+            stmt.setString(1, Name);
+            stmt.setString(2, Type);
+            stmt.setInt(3, Rating);
+
+            BigDecimal fee = new BigDecimal(DistrFee);
+            stmt.setBigDecimal(4, fee);
+//
+            stmt.setInt(5, NumCopies);
+            stmt.setString(6, Id);
+
+            stmt.executeUpdate();
+
+            String[] ActorName = AN.split(",");
+            String[] ActorAge = AA.split(",");
+            String[] ActorGender = AG.split(",");
+            int numOfActor = ActorName.length;
+            if (ActorName != null && ActorAge != null && ActorGender != null) {
+                for (int i = 0; i < numOfActor; i++) {
+                    //update actor
+
+                    int age = Integer.parseInt(ActorAge[i].replaceAll("\\s", ""));
+
+                    stmt = conn.prepareStatement("UPDATE Actor, Movie, AppearedIn SET Actor.Name = ?, Actor.Age = ?, Actor.`M/F` = ? WHERE Movie.Id = ? AND Movie.Id = AppearedIn.movieId AND AppearedIn.actorId = actor.Id ");
+
+                    if (ActorName[i].charAt(0) == ' ') {
+                        ActorName[i] = ActorName[i].substring(1);
+                    }
+
+                    stmt.setString(1, ActorName[i]);
+                    stmt.setInt(2, age);
+                    stmt.setString(3, ActorGender[i].replaceAll("\\s", ""));
+                    stmt.setString(4, Id);
+                    stmt.executeUpdate();
+                }
+            }
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public String[] getMovieForEdit(String Name) {
+        try {
+            String ans[] = new String[9];
+            //int Id, String name, String Type, int Rating, double distrFee, int NumOfCopies, String ActorName, String ActorAge, String ActorGender
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Movie.Id, Movie.Name, Movie.Type, Movie.Rating, Movie.distrFee, Movie.NumCopies\n"
+                    + "FROM `moviedb`.Movie\n"
+                    + "WHERE Name LIKE ?");
+            stmt.setString(1, "%" + Name + "%");
+            ResultSet rs1 = stmt.executeQuery();
+
+            stmt = conn.prepareStatement("SELECT Actor.Name\n"
+                    + "FROM Actor, appearedIn, movie\n"
+                    + "WHERE Actor.Id = appearedIn.actorId AND appearedIn.movieId = movie.Id AND movie.Name LIKE ?");
+            stmt.setString(1, "%" + Name + "%");
+            ResultSet rs2 = stmt.executeQuery();
+
+            stmt = conn.prepareStatement("SELECT Actor.Age\n"
+                    + "FROM Actor, appearedIn, movie\n"
+                    + "WHERE Actor.Id = appearedIn.actorId AND appearedIn.movieId = movie.Id AND movie.Name LIKE ?");
+            stmt.setString(1, "%" + Name + "%");
+            ResultSet rs3 = stmt.executeQuery();
+
+            stmt = conn.prepareStatement("SELECT Actor.`M/F`\n"
+                    + "FROM Actor, appearedIn, movie\n"
+                    + "WHERE Actor.Id = appearedIn.actorId AND appearedIn.movieId = movie.Id AND movie.Name LIKE ?");
+            stmt.setString(1, "%" + Name + "%");
+            ResultSet rs4 = stmt.executeQuery();
+            int i = 0;
+            if (!rs1.next()) {
+                return null;
+            }
+            int gg = 1;
+
+            ans[i++] = rs1.getString(gg++);
+            ans[i++] = rs1.getString(gg++);
+            ans[i++] = rs1.getString(gg++);
+            ans[i++] = rs1.getString(gg++);
+            ans[i++] = rs1.getString(gg++);
+            ans[i++] = rs1.getString(gg++);
+            //System.out.println(rs1.getString(gg-1));
+
+            //handle movie actor name
+            if (rs2 == null) {
+                ans[i++] = null;
+            } else {
+                String gaga = "";
+                int itr = 1;
+                while (rs2.next()) {
+                    gaga += rs2.getString(itr) + ", ";
+                }
+                if (!gaga.equals("")) {
+                    gaga = gaga.substring(0, gaga.length() - 2);
+                    ans[i++] = gaga;
+                } else {
+                    ans[i++] = null;
+                }
+            }
+
+            if (rs3 == null) {
+                ans[i++] = null;
+            } else {
+                String gaga = "";
+                int itr = 1;
+                while (rs3.next()) {
+                    gaga += rs3.getString(itr) + ", ";
+                }
+                if (!gaga.equals("")) {
+                    gaga = gaga.substring(0, gaga.length() - 2);
+                    ans[i++] = gaga;
+                } else {
+                    ans[i++] = null;
+                }
+            }
+            if (rs4 == null) {
+                ans[i++] = null;
+            } else {
+                String gaga = "";
+                int itr = 1;
+                while (rs4.next()) {
+                    gaga += rs4.getString(itr) + ", ";
+                }
+                if (!gaga.equals("")) {
+                    gaga = gaga.substring(0, gaga.length() - 2);
+                    ans[i++] = gaga;
+                } else {
+                    ans[i++] = null;
+                }
+            }
+
+            return ans;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public String getActors(String movieName) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Actor.Name\n"
+                    + "FROM Actor, appearedIn, movie\n"
+                    + "WHERE Actor.Id = appearedIn.actorId AND appearedIn.movieId = movie.Id AND movie.Name LIKE ?");
+            stmt.setString(1, "%" + movieName + "%");
+            ResultSet rs2 = stmt.executeQuery();
+            String gaga = "";
+            if (rs2 == null) {
+                gaga = null;
+            } else {
+
+                int itr = 1;
+                while (rs2.next()) {
+                    gaga += rs2.getString(itr) + ", ";
+                }
+                if (!gaga.equals("")) {
+                    gaga = gaga.substring(0, gaga.length() - 2);
+
+                } else {
+                    gaga = null;
+                }
+            }
+
+//            String movieId = getMovieId(movieName);
+//            stmt = conn.prepareStatement("SELECT COUNT(actor.name) \n"
+//                    + "FROM actor, appearedin, movie\n"
+//                    + "WHERE movie.Id = ? AND movie.Id = appearedIn.MovieId\n"
+//                    + "AND appearedIn.ActorId = actor.Id;");
+//            stmt.setString(1, movieId);
+//            int size = 0;
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                size = rs.getInt("COUNT(actor.name)");
+//            }
+//            stmt = conn.prepareStatement("SELECT actor.name \n"
+//                    + "FROM actor, appearedin, movie\n"
+//                    + "WHERE movie.Id = ? AND movie.Id = appearedIn.MovieId\n"
+//                    + "AND appearedIn.ActorId = actor.Id;");
+//            stmt.setString(1, movieId);
+//            rs = stmt.executeQuery();
+//            String[] actors = new String[size];
+//            int i = 0;
+//            while (rs.next()) {
+//                actors[i] = rs.getString("actor.name");
+//                i++;
+//            }
+//            return actors;
+            return gaga;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet getAccountForEdit(String username) {
+        /*
+        String SSN, String lastName, String firstName,
+            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
+            String dO, String accountType, String username, String password
+         */
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Person.lastname, Person.Firstname, Person.Address, Location.city, Location.State, Person.Zipcode, Person.telephone, Customer.email,  Customer.CreditCardNumber, Account.Type, Account.password\n"
+                    + "FROM Person, Customer, Account, Location\n"
+                    + "WHERE Person.SSN = Customer.Id AND Account.Customer = Person.SSN AND Location.Zipcode = Person.ZipCode AND Account.username = ? ");
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+//    public ResultSet getAccountForEdit(String username) {
+//        /*
+//        String SSN, String lastName, String firstName,
+//            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
+//            String dO, String accountType, String username, String password
+//         */
+//        try {
+//            PreparedStatement stmt = null;
+//            stmt = conn.prepareStatement("SELECT Person.Lastname, Person.Firstname, Person.Address, Location.City, Location.State, Person.ZipCode, Person.Telephone, Customer.Email,  Customer.CreditCardNumber, Account.Type, Account.password\n"
+//                    + "FROM Person, Customer, Account, Location\n"
+//                    + "WHERE Person.SSN = Customer.Id AND Account.Customer = Person.SSN AND Location.Zipcode = Person.ZipCode AND Account.username = ? ");
+//            stmt.setString(1, username);
+//            ResultSet rs = stmt.executeQuery();
+//            return rs;
+//
+//        } catch (SQLException ex) {
+//            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+//            return null;
+//        }
+//    }
+
+    public ResultSet queryMovieRentalbyName(String name) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT DISTINCT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND m.Name LIKE ? AND r.AccountId = a.Id AND a.Customer = p.SSN GROUP BY m.Name;");
+            stmt.setString(1, "%" + name + "%");
+
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet queryMovieRentalbyType(String name) {
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT m.Name, m.Type, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND m.Type LIKE ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
+            stmt.setString(1, "%" + name + "%");
+
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet queryMovieRentalbyCustomer(String FirstLast) {
+        try {
+            PreparedStatement stmt = null;
+            String[] names = FirstLast.split(" ");
+            String LastName = names[1];
+            String FirstName = names[0];
+            stmt = conn.prepareStatement("SELECT m.Name, p.LastName, p.FirstName FROM Movie m, Rental r, Person p, Account a WHERE m.id = r.MovieId AND p.LastName = ? AND p.FirstName = ? AND r.AccountId = a.Id AND a.Customer = p.SSN ;");
+            stmt.setString(1, LastName);
+            stmt.setString(2, FirstName);
+
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet getCustomerForEdit(String SSN) {
+        /*
+        String SSN, String lastName, String firstName,
+            String address, String zp, String city, String state, String telephone, String email, String RT, String creditCardNumber,
+            String dO, String accountType, String username, String password
+         */
+        try {
+            PreparedStatement stmt = null;
+            stmt = conn.prepareStatement("SELECT Person.SSN, Person.lastname, Person.Firstname, Person.Address, Location.city, "
+                    + "Location.State, Person.Zipcode, Person.telephone, Customer.email, Customer.Rating, Customer.CreditCardNumber, "
+                    + "Account.DateOpened, Account.Type, Account.username, Account.password\n"
+                    + "FROM Person, Customer, Account, Location\n"
+                    + "WHERE Person.SSN = Customer.Id AND Account.Customer = Person.SSN AND Location.Zipcode = Person.ZipCode AND Person.SSN = ? ");
+            stmt.setString(1, SSN);
+            ResultSet rs = stmt.executeQuery();
+            //rs.next();
+            return rs;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
 }

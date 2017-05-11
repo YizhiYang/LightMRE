@@ -68,6 +68,42 @@
         <servlet-name>RentIt</servlet-name>
         <servlet-class>RentIt</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ReturnIt</servlet-name>
+        <servlet-class>ReturnIt</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditEmployeeServlet</servlet-name>
+        <servlet-class>EditEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditEmployeeTransaction</servlet-name>
+        <servlet-class>EditEmployeeTransaction</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditMovieServlet</servlet-name>
+        <servlet-class>EditMovieServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditMovieTransaction</servlet-name>
+        <servlet-class>EditMovieTransaction</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LogOut</servlet-name>
+        <servlet-class>LogOut</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SalesReport</servlet-name>
+        <servlet-class>SalesReport</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountSetting</servlet-name>
+        <servlet-class>AccountSetting</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProcessManagerSearch</servlet-name>
+        <servlet-class>ProcessManagerSearch</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServ</servlet-name>
         <url-pattern>/HomePageServ</url-pattern>
@@ -135,6 +171,42 @@
     <servlet-mapping>
         <servlet-name>RentIt</servlet-name>
         <url-pattern>/RentIt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReturnIt</servlet-name>
+        <url-pattern>/ReturnIt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditEmployeeServlet</servlet-name>
+        <url-pattern>/EditEmployeeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditEmployeeTransaction</servlet-name>
+        <url-pattern>/EditEmployeeTransaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditMovieServlet</servlet-name>
+        <url-pattern>/EditMovieServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditMovieTransaction</servlet-name>
+        <url-pattern>/EditMovieTransaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogOut</servlet-name>
+        <url-pattern>/LogOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SalesReport</servlet-name>
+        <url-pattern>/SalesReport</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountSetting</servlet-name>
+        <url-pattern>/AccountSetting</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProcessManagerSearch</servlet-name>
+        <url-pattern>/ProcessManagerSearch</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -18,7 +18,7 @@
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/BestSellMovie">Best sell movies</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="http://localhost:8080/LightMRE/RentalHistory">History</a>
             <a class = "HomeButton" onClick="forwardToSearch()" style="text-decoration:none" href="#">Search</a>
-            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="#">About Us</a>
+            <a class = "HomeButton" onClick="displaymessage()" style="text-decoration:none" href="http://localhost:8080/LightMRE/LogOut">Log Out</a>
         </div>
         </br>
         </br>
@@ -55,6 +55,10 @@
                 //session.setAttribute("keyword", document.getElementById("search"));
 
                 window.location = "SearchResult.jsp"
+            }
+
+            function forwardToSearch() {
+                window.location = "Search.jsp"
             }
         </script>
     </body>
